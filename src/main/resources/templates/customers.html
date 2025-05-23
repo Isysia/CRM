@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Customers List</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>Customers</h1>
+
+<div>
+    <a th:href="@{/customers/new}">Add New Customer</a>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody th:if="${#lists.isEmpty(customers)}">
+    <tr>
+        <td colspan="6">No customers found.</td>
+    </tr>
+    </tbody>
+    <tbody th:each="customer : ${customers}">
+    <tr>
+        <td th:text="${customer.id}">1</td>
+        <td th:text="${customer.name}">John Doe</td>
+        <td th:text="${customer.email}">john@example.com</td>
+        <td th:text="${customer.phone}">+1234567890</td>
+        <td th:text="${customer.status}">ACTIVE</td>
+        <td>
+            <a th:href="@{'/customers/edit/' + ${customer.id}}">Edit</a>
+            |
+            <a th:href="@{'/customers/delete/' + ${customer.id}}"
+               onclick="return confirm('Are you sure you want to delete this customer?');">
+                Delete
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

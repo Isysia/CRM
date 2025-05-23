@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Form</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+
+<!-- Динамічний заголовок New/Edit -->
+<h1 th:text="${customer.id} == null ? 'New Customer' : 'Edit Customer'">Customer Form</h1>
+
+<!-- Форма створення -->
+<form th:if="${customer.id} == null"
+      th:action="@{/customers}"
+      th:object="${customer}"
+      method="post">
+
+    <label th:for="*{name}">Name:</label>
+    <input type="text" th:field="*{name}" placeholder="Enter full name" required/>
+
+    <label th:for="*{email}">Email:</label>
+    <input type="email" th:field="*{email}" placeholder="Enter email address" required/>
+
+    <label th:for="*{phone}">Phone:</label>
+    <input type="text" th:field="*{phone}" placeholder="Enter phone number"/>
+
+    <label th:for="*{status}">Status:</label>
+    <select th:field="*{status}">
+        <option value="" disabled>Select status</option>
+        <option value="LEAD">Lead</option>
+        <option value="ACTIVE">Active</option>
+        <option value="INACTIVE">Inactive</option>
+        <option value="CLOSED">Closed</option>
+    </select>
+
+    <button type="submit">Save</button>
+    <a th:href="@{/customers}">Cancel</a>
+</form>
+
+<!-- Форма редагування -->
+<form th:if="${customer.id} != null"
+      th:action="@{/customers/{id}(id=${customer.id})}"
+      th:object="${customer}"
+      method="post">
+
+    <label th:for="*{name}">Name:</label>
+    <input type="text" th:field="*{name}" placeholder="Enter full name" required/>
+
+    <label th:for="*{email}">Email:</label>
+    <input type="email" th:field="*{email}" placeholder="Enter email address" required/>
+
+    <label th:for="*{phone}">Phone:</label>
+    <input type="text" th:field="*{phone}" placeholder="Enter phone number"/>
+
+    <label th:for="*{status}">Status:</label>
+    <select th:field="*{status}">
+        <option value="" disabled>Select status</option>
+        <option value="LEAD">Lead</option>
+        <option value="ACTIVE">Active</option>
+        <option value="INACTIVE">Inactive</option>
+        <option value="CLOSED">Closed</option>
+    </select>
+
+    <button type="submit">Update</button>
+    <a th:href="@{/customers}">Cancel</a>
+</form>
+
+</body>
+</html>
