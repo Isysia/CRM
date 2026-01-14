@@ -39,4 +39,3 @@ public class Customer {
     @Column(nullable = false)
     private CustomerStatus status;
 }
-
