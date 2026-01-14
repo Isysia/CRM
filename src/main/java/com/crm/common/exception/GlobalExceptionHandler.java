@@ -2,6 +2,7 @@ package com.crm.common.exception;
 
 import com.crm.customers.exceptions.CustomerNotFoundException;
 import com.crm.customers.exceptions.DuplicateResourceException;
+import com.crm.offers.exceptions.OfferNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,25 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomerNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleCustomerNotFound(
             CustomerNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Not Found")
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    /**
+     * Handle OfferNotFoundException → 404 NOT FOUND
+     */
+    @ExceptionHandler(OfferNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleOfferNotFound(
+            OfferNotFoundException ex,
             HttpServletRequest request
     ) {
         ErrorResponse error = ErrorResponse.builder()
