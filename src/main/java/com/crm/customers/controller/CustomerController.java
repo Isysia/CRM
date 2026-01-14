@@ -1,78 +1,97 @@
 package com.crm.customers.controller;
 
+import com.crm.customers.dto.CustomerRequestDTO;
+import com.crm.customers.dto.CustomerResponseDTO;
+import com.crm.customers.mapper.CustomerMapper;
 import com.crm.customers.model.Customer;
 import com.crm.customers.service.CustomerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
- * MVC‑контролер для керування Customer через Thymeleaf‑шаблони.
+ * REST Controller for Customer operations.
+ * Now uses DTOs instead of exposing Entity directly.
  */
-@Controller
-@RequestMapping("/customers")
+@RestController
+@RequestMapping("/api/customers")
 public class CustomerController {
 
-    private final CustomerService customerService;
+    private final CustomerService service;
+    private final CustomerMapper mapper;
 
-    @Autowired
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
+    public CustomerController(CustomerService service, CustomerMapper mapper) {
+        this.service = service;
+        this.mapper = mapper;
     }
 
     /**
-     * Показати список всіх клієнтів.
+     * GET /api/customers
+     * Returns all customers as DTOs
      */
     @GetMapping
-    public String listCustomers(Model model) {
-        model.addAttribute("customers", customerService.getAllCustomers());
-        return "customers"; // templates/customers.html
+    public ResponseEntity<List<CustomerResponseDTO>> getAllCustomers() {
+        List<CustomerResponseDTO> customers = service.getAllCustomers()
+                .stream()
+                .map(mapper::toResponseDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(customers);
     }
 
     /**
-     * Показати форму створення нового клієнта.
+     * GET /api/customers/{id}
+     * Returns a single customer by ID
      */
-    @GetMapping("/new")
-    public String showCreateForm(Model model) {
-        model.addAttribute("customer", new Customer());
-        return "customer_form"; // templates/customer_form.html
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerResponseDTO> getCustomerById(@PathVariable Long id) {
+        Customer customer = service.getCustomerById(id);
+        return ResponseEntity.ok(mapper.toResponseDTO(customer));
     }
 
     /**
-     * Обробити збереження нового клієнта.
+     * POST /api/customers
+     * Creates a new customer
+     * @Valid triggers Bean Validation
      */
     @PostMapping
-    public String createCustomer(@ModelAttribute("customer") Customer customer) {
-        customerService.saveCustomer(customer);
-        return "redirect:/customers";
+    public ResponseEntity<CustomerResponseDTO> createCustomer(
+            @Valid @RequestBody CustomerRequestDTO requestDTO
+    ) {
+        Customer customer = mapper.toEntity(requestDTO);
+        Customer created = service.createCustomer(customer);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(mapper.toResponseDTO(created));
     }
 
     /**
-     * Показати форму редагування існуючого клієнта.
+     * PUT /api/customers/{id}
+     * Updates an existing customer
      */
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        model.addAttribute("customer", customerService.getCustomerById(id));
-        return "customer_form"; // reuse same шаблон
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerResponseDTO> updateCustomer(
+            @PathVariable Long id,
+            @Valid @RequestBody CustomerRequestDTO requestDTO
+    ) {
+        Customer customerData = mapper.toEntity(requestDTO);
+        Customer updated = service.updateCustomer(id, customerData);
+
+        return ResponseEntity.ok(mapper.toResponseDTO(updated));
     }
 
     /**
-     * Обробити оновлення даних клієнта.
+     * DELETE /api/customers/{id}
+     * Deletes a customer
      */
-    @PostMapping("/{id}")
-    public String updateCustomer(@PathVariable Long id,
-                                 @ModelAttribute("customer") Customer customer) {
-        customerService.updateCustomer(id, customer);
-        return "redirect:/customers";
-    }
-
-    /**
-     * Видалити клієнта.
-     */
-    @GetMapping("/delete/{id}")
-    public String deleteCustomer(@PathVariable Long id) {
-        customerService.deleteCustomer(id);
-        return "redirect:/customers";
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+        service.deleteCustomer(id);
+        return ResponseEntity.noContent().build();
     }
 }

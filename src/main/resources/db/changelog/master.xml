@@ -1,0 +1,12 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+       http://www.liquibase.org/xml/ns/dbchangelog
+       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <!-- Підключаємо малі гілки за bounded-context -->
+    <include file="db/changelog/customers/changelog-master.xml"/>
+    <include file="db/changelog/offers/changelog-master.xml"/>
+    <include file="db/changelog/tasks/changelog-master.xml"/>
+</databaseChangeLog>

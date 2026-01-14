@@ -1,12 +1,8 @@
 package com.crm.customers.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +12,8 @@ import lombok.Builder;
  */
 @Entity
 @Table(name = "customers")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,13 +24,19 @@ public class Customer {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
 
     @Column(nullable = false, unique = true)
     private String email;
 
     private String phone;
 
-    private String status;
-
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CustomerStatus status;
 }
+

@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20250524-002-insert-customers-dev
+      author: Serhii
+      context: dev
+      changes:
+        - insert:
+            tableName: customers
+            columns:
+              - column:
+                  name: first_name
+                  value: Jan
+              - column:
+                  name: last_name
+                  value: Kowalski
+              - column:
+                  name: email
+                  value: jan.kowalski@example.pl
+              - column:
+                  name: phone
+                  value: +48501234567
+              - column:
+                  name: status
+                  value: ACTIVE
+        - insert:
+            tableName: customers
+            columns:
+              - column:
+                  name: first_name
+                  value: Anna
+              - column:
+                  name: last_name
+                  value: Nowak
+              - column:
+                  name: email
+                  value: anna.nowak@example.pl
+              - column:
+                  name: phone
+                  value: +48501234568
+              - column:
+                  name: status
+                  value: ACTIVE

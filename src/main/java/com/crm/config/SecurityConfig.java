@@ -3,31 +3,26 @@ package com.crm.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
+/**
+ * Security configuration - TEMPORARY PERMISSIVE MODE
+ * Allows all requests without authentication for development.
+ * Will be replaced with proper security later.
+ */
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1) Дозволяємо H2-консоль без авторизації
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for API testing
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .anyRequest().permitAll()
-                )
-                // 2) Вимикаємо CSRF для коректної роботи консолі
-                .csrf(csrf -> csrf.disable())
-                // 3) Дозволяємо відображення в <iframe> (frameOptions.disable())
-                .headers(headers -> headers
-                        .frameOptions(frame -> frame.disable())
-                )
-                // 4) Стандартна форма логіну
-                .formLogin(withDefaults());
+                        .anyRequest().permitAll() // Allow all requests
+                );
 
         return http.build();
     }
-
 }
