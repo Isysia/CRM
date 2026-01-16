@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@WithMockUser(roles = "MANAGER")
 class TaskControllerIntegrationTest {
 
     @Autowired
@@ -431,6 +433,7 @@ class TaskControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     @DisplayName("DELETE /api/tasks/{id} - Should delete task successfully")
     void shouldDeleteTaskSuccessfully() throws Exception {
         // When & Then
@@ -444,6 +447,7 @@ class TaskControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     @DisplayName("DELETE /api/tasks/{id} - Should return 404 when task not found")
     void shouldReturn404WhenDeletingNonExistentTask() throws Exception {
         // When & Then

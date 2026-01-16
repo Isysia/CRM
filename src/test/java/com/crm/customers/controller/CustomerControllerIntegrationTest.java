@@ -6,11 +6,13 @@ import com.crm.customers.model.CustomerStatus;
 import com.crm.customers.repository.CustomerRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@WithMockUser(roles = "MANAGER")
 class CustomerControllerIntegrationTest {
 
     @Autowired
@@ -226,6 +229,8 @@ class CustomerControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("DELETE /api/customers/{id} - Existing ID - Returns No Content")
     void deleteCustomer_ExistingId_ReturnsNoContent() throws Exception {
         // Given
         Customer customer = Customer.builder()
@@ -247,6 +252,8 @@ class CustomerControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")  // ← Змінити з MANAGER на ADMIN
+    @DisplayName("DELETE /api/customers/{id} - Non-existing ID - Returns Not Found")
     void deleteCustomer_NonExistingId_ReturnsNotFound() throws Exception {
         mockMvc.perform(delete("/api/customers/999"))
                 .andExpect(status().isNotFound());

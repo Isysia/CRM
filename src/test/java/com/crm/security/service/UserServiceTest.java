@@ -229,8 +229,6 @@ class UserServiceTest {
     void shouldUpdateUserSuccessfully() {
         // Given
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userRepository.existsByUsername(anyString())).thenReturn(false);
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.save(testUser)).thenReturn(testUser);
         when(userMapper.toDTO(testUser)).thenReturn(testResponseDTO);
 

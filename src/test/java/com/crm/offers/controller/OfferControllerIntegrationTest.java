@@ -9,11 +9,13 @@ import com.crm.offers.model.OfferStatus;
 import com.crm.offers.repository.OfferRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@WithMockUser(roles = "MANAGER")
 class OfferControllerIntegrationTest {
 
     @Autowired
@@ -277,6 +280,8 @@ class OfferControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("DELETE /api/offers/{id} - Existing ID - Returns No Content")
     void deleteOffer_ExistingId_ReturnsNoContent() throws Exception {
         // Given
         Offer offer = Offer.builder()
@@ -298,6 +303,8 @@ class OfferControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("DELETE /api/offers/{id} - Non-existing ID - Returns Not Found")
     void deleteOffer_NonExistingId_ReturnsNotFound() throws Exception {
         mockMvc.perform(delete("/api/offers/999"))
                 .andExpect(status().isNotFound());
