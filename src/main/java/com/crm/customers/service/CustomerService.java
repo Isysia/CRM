@@ -1,86 +1,19 @@
 package com.crm.customers.service;
 
-import com.crm.customers.exceptions.CustomerNotFoundException;
-import com.crm.customers.exceptions.DuplicateResourceException;
-import com.crm.customers.model.Customer;
-import com.crm.customers.repository.CustomerRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
+import com.crm.customers.dto.CustomerRequestDTO;
+import com.crm.customers.dto.CustomerResponseDTO;
 
 import java.util.List;
 
-@Service
-@Transactional
-public class CustomerService {
+public interface CustomerService {
 
-    private final CustomerRepository repository;
+    CustomerResponseDTO createCustomer(CustomerRequestDTO requestDTO);
 
-    public CustomerService(CustomerRepository repository) {
-        this.repository = repository;
-    }
+    CustomerResponseDTO getCustomerById(Long id);
 
-    /**
-     * Get all customers.
-     */
-    public List<Customer> getAllCustomers() {
-        return repository.findAll();
-    }
+    List<CustomerResponseDTO> getAllCustomers();
 
-    /**
-     * Get customer by ID.
-     */
-    public Customer getCustomerById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new CustomerNotFoundException(id));
-    }
+    CustomerResponseDTO updateCustomer(Long id, CustomerRequestDTO requestDTO);
 
-    /**
-     * Create new customer.
-     */
-    public Customer createCustomer(Customer customer) {
-        if (repository.findByEmail(customer.getEmail()).isPresent()) {
-            throw new DuplicateResourceException(
-                    "Customer",
-                    "email",
-                    customer.getEmail()
-            );
-        }
-        return repository.save(customer);
-    }
-
-    /**
-     * Update existing customer.
-     */
-    public Customer updateCustomer(Long id, Customer newData) {
-        Customer existing = getCustomerById(id);
-
-        // email uniqueness check
-        repository.findByEmail(newData.getEmail())
-                .filter(c -> !c.getId().equals(id))
-                .ifPresent(c -> {
-                    throw new DuplicateResourceException(
-                            "Customer",
-                            "email",
-                            newData.getEmail()
-                    );
-                });
-
-        existing.setFirstName(newData.getFirstName());
-        existing.setLastName(newData.getLastName());
-        existing.setEmail(newData.getEmail());
-        existing.setPhone(newData.getPhone());
-        existing.setStatus(newData.getStatus());
-
-        return repository.save(existing);
-    }
-
-    /**
-     * Delete customer by ID.
-     */
-    public void deleteCustomer(Long id) {
-        if (!repository.existsById(id)) {
-            throw new CustomerNotFoundException(id);
-        }
-        repository.deleteById(id);
-    }
+    void deleteCustomer(Long id);
 }

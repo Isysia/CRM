@@ -2,96 +2,127 @@ package com.crm.customers.controller;
 
 import com.crm.customers.dto.CustomerRequestDTO;
 import com.crm.customers.dto.CustomerResponseDTO;
-import com.crm.customers.mapper.CustomerMapper;
-import com.crm.customers.model.Customer;
 import com.crm.customers.service.CustomerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-/**
- * REST Controller for Customer operations.
- * Now uses DTOs instead of exposing Entity directly.
- */
 @RestController
 @RequestMapping("/api/customers")
+@RequiredArgsConstructor
+@Slf4j
+@Tag(name = "Customers", description = "Customer management APIs - CRUD operations for managing customer data")
+@SecurityRequirement(name = "basicAuth")
 public class CustomerController {
 
-    private final CustomerService service;
-    private final CustomerMapper mapper;
+    private final CustomerService customerService;
 
-    public CustomerController(CustomerService service, CustomerMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
-
-    /**
-     * GET /api/customers
-     * Returns all customers as DTOs
-     */
-    @GetMapping
-    public ResponseEntity<List<CustomerResponseDTO>> getAllCustomers() {
-        List<CustomerResponseDTO> customers = service.getAllCustomers()
-                .stream()
-                .map(mapper::toResponseDTO)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(customers);
-    }
-
-    /**
-     * GET /api/customers/{id}
-     * Returns a single customer by ID
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<CustomerResponseDTO> getCustomerById(@PathVariable Long id) {
-        Customer customer = service.getCustomerById(id);
-        return ResponseEntity.ok(mapper.toResponseDTO(customer));
-    }
-
-    /**
-     * POST /api/customers
-     * Creates a new customer
-     * @Valid triggers Bean Validation
-     */
+    @Operation(
+            summary = "Create a new customer",
+            description = "Creates a new customer with the provided details. Email must be unique. Requires MANAGER or ADMIN role."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Customer created successfully",
+                    content = @Content(schema = @Schema(implementation = CustomerResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "409", description = "Email already exists"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires MANAGER or ADMIN role")
+    })
     @PostMapping
     public ResponseEntity<CustomerResponseDTO> createCustomer(
-            @Valid @RequestBody CustomerRequestDTO requestDTO
-    ) {
-        Customer customer = mapper.toEntity(requestDTO);
-        Customer created = service.createCustomer(customer);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(mapper.toResponseDTO(created));
+            @Valid @RequestBody CustomerRequestDTO requestDTO) {
+        log.info("POST /api/customers - Creating new customer");
+        CustomerResponseDTO response = customerService.createCustomer(requestDTO);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    /**
-     * PUT /api/customers/{id}
-     * Updates an existing customer
-     */
+    @Operation(
+            summary = "Get customer by ID",
+            description = "Retrieves a customer by their unique identifier. Requires USER, MANAGER, or ADMIN role."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Customer found",
+                    content = @Content(schema = @Schema(implementation = CustomerResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Customer not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerResponseDTO> getCustomerById(
+            @Parameter(description = "Customer ID", required = true, example = "1")
+            @PathVariable Long id) {
+        log.info("GET /api/customers/{} - Fetching customer", id);
+        CustomerResponseDTO response = customerService.getCustomerById(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "Get all customers",
+            description = "Retrieves a list of all customers in the system. Requires USER, MANAGER, or ADMIN role."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of customers retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required")
+    })
+    @GetMapping
+    public ResponseEntity<List<CustomerResponseDTO>> getAllCustomers() {
+        log.info("GET /api/customers - Fetching all customers");
+        List<CustomerResponseDTO> response = customerService.getAllCustomers();
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "Update customer",
+            description = "Updates an existing customer's information. Email must be unique if changed. Requires MANAGER or ADMIN role."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Customer updated successfully",
+                    content = @Content(schema = @Schema(implementation = CustomerResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "404", description = "Customer not found"),
+            @ApiResponse(responseCode = "409", description = "Email already exists"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires MANAGER or ADMIN role")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<CustomerResponseDTO> updateCustomer(
+            @Parameter(description = "Customer ID", required = true, example = "1")
             @PathVariable Long id,
-            @Valid @RequestBody CustomerRequestDTO requestDTO
-    ) {
-        Customer customerData = mapper.toEntity(requestDTO);
-        Customer updated = service.updateCustomer(id, customerData);
-
-        return ResponseEntity.ok(mapper.toResponseDTO(updated));
+            @Valid @RequestBody CustomerRequestDTO requestDTO) {
+        log.info("PUT /api/customers/{} - Updating customer", id);
+        CustomerResponseDTO response = customerService.updateCustomer(id, requestDTO);
+        return ResponseEntity.ok(response);
     }
 
-    /**
-     * DELETE /api/customers/{id}
-     * Deletes a customer
-     */
+    @Operation(
+            summary = "Delete customer",
+            description = "Permanently deletes a customer and all associated offers and tasks. Requires ADMIN role."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Customer deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Customer not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires ADMIN role")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
-        service.deleteCustomer(id);
+    public ResponseEntity<Void> deleteCustomer(
+            @Parameter(description = "Customer ID", required = true, example = "1")
+            @PathVariable Long id) {
+        log.info("DELETE /api/customers/{} - Deleting customer", id);
+        customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();
     }
 }

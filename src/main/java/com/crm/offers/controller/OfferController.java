@@ -5,6 +5,14 @@ import com.crm.offers.dto.OfferResponseDTO;
 import com.crm.offers.mapper.OfferMapper;
 import com.crm.offers.model.Offer;
 import com.crm.offers.service.OfferService;
+// ↓↓↓ ДОДАТИ ЦІ IMPORTS ↓↓↓
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+// ↑↑↑ КІНЕЦЬ НОВИХ IMPORTS ↑↑↑
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * REST Controller for Offer operations.
- */
 @RestController
 @RequestMapping("/api/offers")
+@Tag(name = "Offers", description = "Commercial offers management APIs")  // ← ДОДАТИ
+@SecurityRequirement(name = "basicAuth")  // ← ДОДАТИ
 public class OfferController {
 
     private final OfferService service;
@@ -28,10 +35,7 @@ public class OfferController {
         this.mapper = mapper;
     }
 
-    /**
-     * GET /api/offers
-     * Returns all offers
-     */
+    @Operation(summary = "Get all offers")  // ← ДОДАТИ
     @GetMapping
     public ResponseEntity<List<OfferResponseDTO>> getAllOffers() {
         List<OfferResponseDTO> offers = service.getAllOffers()
@@ -42,22 +46,26 @@ public class OfferController {
         return ResponseEntity.ok(offers);
     }
 
-    /**
-     * GET /api/offers/{id}
-     * Returns a single offer by ID
-     */
+    @Operation(summary = "Get offer by ID")  // ← ДОДАТИ
+    @ApiResponses(value = {  // ← ДОДАТИ
+            @ApiResponse(responseCode = "200", description = "Offer found"),
+            @ApiResponse(responseCode = "404", description = "Offer not found")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<OfferResponseDTO> getOfferById(@PathVariable Long id) {
+    public ResponseEntity<OfferResponseDTO> getOfferById(
+            @Parameter(description = "Offer ID") @PathVariable Long id) {  // ← ЗМІНИТИ
         Offer offer = service.getOfferById(id);
         return ResponseEntity.ok(mapper.toResponseDTO(offer));
     }
 
-    /**
-     * GET /api/customers/{customerId}/offers
-     * Returns all offers for a specific customer
-     */
+    @Operation(summary = "Get offers by customer ID")  // ← ДОДАТИ
+    @ApiResponses(value = {  // ← ДОДАТИ
+            @ApiResponse(responseCode = "200", description = "Offers found"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<OfferResponseDTO>> getOffersByCustomerId(@PathVariable Long customerId) {
+    public ResponseEntity<List<OfferResponseDTO>> getOffersByCustomerId(
+            @Parameter(description = "Customer ID") @PathVariable Long customerId) {  // ← ЗМІНИТИ
         List<OfferResponseDTO> offers = service.getOffersByCustomerId(customerId)
                 .stream()
                 .map(mapper::toResponseDTO)
@@ -66,10 +74,12 @@ public class OfferController {
         return ResponseEntity.ok(offers);
     }
 
-    /**
-     * POST /api/offers
-     * Creates a new offer
-     */
+    @Operation(summary = "Create a new offer", description = "Requires MANAGER or ADMIN role")  // ← ДОДАТИ
+    @ApiResponses(value = {  // ← ДОДАТИ
+            @ApiResponse(responseCode = "201", description = "Offer created"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
     @PostMapping
     public ResponseEntity<OfferResponseDTO> createOffer(@Valid @RequestBody OfferRequestDTO requestDTO) {
         Offer offer = mapper.toEntity(requestDTO);
@@ -80,13 +90,14 @@ public class OfferController {
                 .body(mapper.toResponseDTO(created));
     }
 
-    /**
-     * PUT /api/offers/{id}
-     * Updates an existing offer
-     */
+    @Operation(summary = "Update offer", description = "Requires MANAGER or ADMIN role")  // ← ДОДАТИ
+    @ApiResponses(value = {  // ← ДОДАТИ
+            @ApiResponse(responseCode = "200", description = "Offer updated"),
+            @ApiResponse(responseCode = "404", description = "Offer or Customer not found")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<OfferResponseDTO> updateOffer(
-            @PathVariable Long id,
+            @Parameter(description = "Offer ID") @PathVariable Long id,  // ← ЗМІНИТИ
             @Valid @RequestBody OfferRequestDTO requestDTO
     ) {
         Offer offerData = mapper.toEntity(requestDTO);
@@ -95,12 +106,14 @@ public class OfferController {
         return ResponseEntity.ok(mapper.toResponseDTO(updated));
     }
 
-    /**
-     * DELETE /api/offers/{id}
-     * Deletes an offer
-     */
+    @Operation(summary = "Delete offer", description = "Requires ADMIN role")  // ← ДОДАТИ
+    @ApiResponses(value = {  // ← ДОДАТИ
+            @ApiResponse(responseCode = "204", description = "Offer deleted"),
+            @ApiResponse(responseCode = "404", description = "Offer not found")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOffer(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteOffer(
+            @Parameter(description = "Offer ID") @PathVariable Long id) {  // ← ЗМІНИТИ
         service.deleteOffer(id);
         return ResponseEntity.noContent().build();
     }
