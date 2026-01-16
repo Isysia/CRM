@@ -1,4 +1,3 @@
-// src/test/java/com/crm/tasks/controller/TaskControllerIntegrationTest.java
 package com.crm.tasks.controller;
 
 import com.crm.customers.model.Customer;
@@ -34,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class TaskControllerTest {
+class TaskControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
