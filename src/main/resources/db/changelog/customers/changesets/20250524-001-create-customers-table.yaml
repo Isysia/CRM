@@ -35,5 +35,18 @@ databaseChangeLog:
               - column:
                   name: status
                   type: varchar(20)
+                  defaultValue: LEAD
                   constraints:
                     nullable: false
+        - createIndex:
+            indexName: idx_customers_email
+            tableName: customers
+            columns:
+              - column:
+                  name: email
+        - createIndex:
+            indexName: idx_customers_status
+            tableName: customers
+            columns:
+              - column:
+                  name: status

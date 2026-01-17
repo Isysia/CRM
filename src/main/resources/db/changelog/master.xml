@@ -5,8 +5,9 @@
        http://www.liquibase.org/xml/ns/dbchangelog
        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
+    <!-- 1. Independent tables first -->
     <include file="db/changelog/customers/changelog-master.xml"/>
+    <include file="db/changelog/security/changelog-master.xml"/>
     <include file="db/changelog/offers/changelog-master.xml"/>
     <include file="db/changelog/tasks/changelog-master.xml"/>
-    <include file="db/changelog/security/changelog-master.xml"/>
 </databaseChangeLog>

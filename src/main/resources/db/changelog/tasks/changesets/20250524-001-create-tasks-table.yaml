@@ -1,4 +1,3 @@
-# src/main/resources/db/changelog/tasks/changesets/20250524-001-create-tasks-table.yaml
 databaseChangeLog:
   - changeSet:
       id: 20250524-001-create-tasks-table
@@ -30,11 +29,13 @@ databaseChangeLog:
               - column:
                   name: status
                   type: VARCHAR(20)
+                  defaultValue: TODO
                   constraints:
                     nullable: false
               - column:
                   name: priority
                   type: VARCHAR(20)
+                  defaultValue: MEDIUM
                   constraints:
                     nullable: false
               - column:

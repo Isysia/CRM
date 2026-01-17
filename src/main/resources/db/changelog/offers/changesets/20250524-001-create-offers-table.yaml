@@ -29,6 +29,7 @@ databaseChangeLog:
               - column:
                   name: status
                   type: VARCHAR(20)
+                  defaultValue: DRAFT
                   constraints:
                     nullable: false
               - column:
