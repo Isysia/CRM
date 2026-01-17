@@ -1,2 +1,97 @@
+# src/main/resources/db/changelog/tasks/changesets/20250524-001-create-tasks-table.yaml
 databaseChangeLog:
-  -
+  - changeSet:
+      id: 20250524-001-create-tasks-table
+      author: Serhii
+      changes:
+        - createTable:
+            tableName: tasks
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(1000)
+              - column:
+                  name: due_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: priority
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: offer_id
+                  type: BIGINT
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: tasks
+            baseColumnNames: customer_id
+            constraintName: fk_tasks_customer
+            referencedTableName: customers
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: tasks
+            baseColumnNames: offer_id
+            constraintName: fk_tasks_offer
+            referencedTableName: offers
+            referencedColumnNames: id
+            onDelete: SET NULL
+        - createIndex:
+            indexName: idx_tasks_customer_id
+            tableName: tasks
+            columns:
+              - column:
+                  name: customer_id
+        - createIndex:
+            indexName: idx_tasks_offer_id
+            tableName: tasks
+            columns:
+              - column:
+                  name: offer_id
+        - createIndex:
+            indexName: idx_tasks_status
+            tableName: tasks
+            columns:
+              - column:
+                  name: status
+        - createIndex:
+            indexName: idx_tasks_due_date
+            tableName: tasks
+            columns:
+              - column:
+                  name: due_date

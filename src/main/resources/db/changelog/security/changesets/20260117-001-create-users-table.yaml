@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 20250524-001-create-offers-table
+      id: 20260117-001-create-users-table
       author: Serhii
       changes:
         - createTable:
-            tableName: offers
+            tableName: users
             columns:
               - column:
                   name: id
@@ -14,26 +14,32 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: title
-                  type: VARCHAR(200)
+                  name: username
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
-                  name: description
-                  type: VARCHAR(1000)
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
               - column:
-                  name: price
-                  type: DECIMAL(19,2)
+                  name: enabled
+                  type: BOOLEAN
+                  defaultValueBoolean: true
                   constraints:
                     nullable: false
               - column:
-                  name: status
-                  type: VARCHAR(20)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: customer_id
-                  type: BIGINT
+                  name: account_non_locked
+                  type: BOOLEAN
+                  defaultValueBoolean: true
                   constraints:
                     nullable: false
               - column:
@@ -48,22 +54,15 @@ databaseChangeLog:
                   defaultValueComputed: CURRENT_TIMESTAMP
                   constraints:
                     nullable: false
-        - addForeignKeyConstraint:
-            baseTableName: offers
-            baseColumnNames: customer_id
-            constraintName: fk_offers_customer
-            referencedTableName: customers
-            referencedColumnNames: id
-            onDelete: CASCADE
         - createIndex:
-            indexName: idx_offers_customer_id
-            tableName: offers
+            indexName: idx_users_username
+            tableName: users
             columns:
               - column:
-                  name: customer_id
+                  name: username
         - createIndex:
-            indexName: idx_offers_status
-            tableName: offers
+            indexName: idx_users_email
+            tableName: users
             columns:
               - column:
-                  name: status
+                  name: email
