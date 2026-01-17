@@ -18,3 +18,4 @@ VALUES ('Alice Johnson', 'alice.johnson@example.com', '+15551234567', 'LEAD'),
 --   (1, 'Follow up call',       DATEADD('DAY', 3, CURRENT_DATE), 'OPEN'),
 --   (2, 'Send revised quote',   DATEADD('DAY', 1, CURRENT_DATE), 'OPEN'),
 --   (3, 'Archive completed deal', CURRENT_DATE,                    'DONE');
+
