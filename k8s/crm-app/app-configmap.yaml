@@ -5,4 +5,11 @@ metadata:
   namespace: crm
 data:
   SPRING_PROFILES_ACTIVE: "prod"
-  SPRING_DATASOURCE_URL: "jdbc:mariadb://mysql:3306/crm"
+  SPRING_DATASOURCE_URL: "jdbc:mariadb://mysql:3306/crm_db?useSSL=false&serverTimezone=UTC"  # crm_db ← ВАЖЛИВО!
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "validate"
+  SPRING_JPA_SHOW_SQL: "false"
+  SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: "org.hibernate.dialect.MariaDBDialect"
+  SPRING_LIQUIBASE_ENABLED: "true"
+  SPRING_LIQUIBASE_CONTEXTS: "prod"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics"
+  MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: "when_authorized"
