@@ -16,45 +16,45 @@ import TaskDetails from './components/tasks/TaskDetails';
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <div className="min-h-screen bg-gray-50">
-                  <Navbar />
-                  <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    
-                    {/* Customers */}
-                    <Route path="/customers" element={<CustomerList />} />
-                    <Route path="/customers/new" element={<CustomerForm />} />
-                    <Route path="/customers/:id" element={<CustomerDetails />} />
-                    <Route path="/customers/:id/edit" element={<CustomerForm />} />
-                    
-                    {/* Offers */}
-                    <Route path="/offers" element={<OfferList />} />
-                    <Route path="/offers/new" element={<OfferForm />} />
-                    <Route path="/offers/:id" element={<OfferDetails />} />
-                    <Route path="/offers/:id/edit" element={<OfferForm />} />
-                    
-                    {/* Tasks */}
-                    <Route path="/tasks" element={<TaskList />} />
-                    <Route path="/tasks/new" element={<TaskForm />} />
-                    <Route path="/tasks/:id" element={<TaskDetails />} />
-                    <Route path="/tasks/:id/edit" element={<TaskForm />} />
-                  </Routes>
-                </div>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+
+            <Route
+                path="/*"
+                element={
+                  <ProtectedRoute>
+                    <div className="min-h-screen bg-gray-50">
+                      <Navbar />
+                      <Routes>
+                        <Route path="/" element={<Dashboard />} />
+
+                        {/* Customers */}
+                        <Route path="/customers" element={<CustomerList />} />
+                        <Route path="/customers/new" element={<CustomerForm />} />
+                        <Route path="/customers/:id" element={<CustomerDetails />} />
+                        <Route path="/customers/:id/edit" element={<CustomerForm />} />
+
+                        {/* Offers */}
+                        <Route path="/offers" element={<OfferList />} />
+                        <Route path="/offers/new" element={<OfferForm />} />
+                        <Route path="/offers/:id" element={<OfferDetails />} />
+                        <Route path="/offers/:id/edit" element={<OfferForm />} />
+
+                        {/* Tasks */}
+                        <Route path="/tasks" element={<TaskList />} />
+                        <Route path="/tasks/new" element={<TaskForm />} />
+                        <Route path="/tasks/:id" element={<TaskDetails />} />
+                        <Route path="/tasks/:id/edit" element={<TaskForm />} />
+                      </Routes>
+                    </div>
+                  </ProtectedRoute>
+                }
+            />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
   );
 }
 

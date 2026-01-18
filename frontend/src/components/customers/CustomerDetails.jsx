@@ -20,7 +20,10 @@ export default function CustomerDetails() {
     try {
       setLoading(true);
       const response = await customerAPI.getById(id);
-      console.log('Customer data:', response.data); // DEBUG
+      console.log('RAW Response:', response.data);  // ← ДОДАЙ
+      console.log('createdAt type:', typeof response.data.createdAt);  // ← ДОДАЙ
+      console.log('createdAt value:', response.data.createdAt);  // ← ДОДАЙ
+      console.log('Parsed date:', new Date(response.data.createdAt));  // ← ДОДАЙ
       setCustomer(response.data);
     } catch (err) {
       console.error('Error fetching customer:', err); // DEBUG
@@ -46,16 +49,39 @@ export default function CustomerDetails() {
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     try {
+      const dateWithTimezone = dateString.includes('Z') ? dateString : `${dateString}Z`;
       const date = new Date(dateString);
-      return date.toLocaleDateString('pl-PL', {
+      return date.toLocaleString('pl-PL', {
         year: 'numeric',
         month: '2-digit',
-        day: '2-digit'
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZone: 'Europe/Warsaw'
       });
     } catch (e) {
       console.error('Date parsing error:', e);
       return '-';
     }
+  };
+
+  const getStatusBadge = (status) => {
+    const styles = {
+      'ACTIVE': 'bg-green-100 text-green-800',
+      'LEAD': 'bg-yellow-100 text-yellow-800',
+      'INACTIVE': 'bg-gray-100 text-gray-800'
+    };
+    const labels = {
+      'ACTIVE': 'Aktywny',
+      'LEAD': 'Potencjalny (Lead)',
+      'INACTIVE': 'Nieaktywny'
+    };
+    return (
+        <span className={`px-4 py-2 rounded-full text-sm font-semibold ${styles[status] || styles['INACTIVE']}`}>
+      {labels[status] || status}
+    </span>
+    );
   };
 
   const canModify = user?.roles?.includes('ROLE_ADMIN') || user?.roles?.includes('ROLE_MANAGER');
@@ -154,9 +180,7 @@ export default function CustomerDetails() {
 
             <div>
               <label className="block text-sm font-medium text-gray-500">Data utworzenia</label>
-              <p className="mt-1 text-lg text-gray-900">
-                {formatDate(customer.createdAt)}
-              </p>
+              <p className="mt-1 text-lg text-gray-900">{formatDate(customer.createdAt)}</p>
             </div>
 
             <div>

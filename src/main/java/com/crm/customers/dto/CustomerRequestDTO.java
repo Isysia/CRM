@@ -31,8 +31,8 @@ public class CustomerRequestDTO {
     private String email;
 
     @Pattern(
-            regexp = "^\\+?[0-9]{10,15}$",
-            message = "Phone must be 10-15 digits, optionally starting with +"
+            regexp = "^\\+?[0-9\\s]{10,20}$",
+            message = "Phone must be 10-20 characters (digits and spaces), optionally starting with +"
     )
     private String phone;
 

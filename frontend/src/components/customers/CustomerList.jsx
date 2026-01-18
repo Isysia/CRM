@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { customerAPI } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import { useRole } from '../../hooks/useRole';
+import { useNavigate } from 'react-router-dom';
 
 export default function CustomerList() {
   const [customers, setCustomers] = useState([]);
@@ -10,6 +11,7 @@ export default function CustomerList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
   const { isManager, isAdmin } = useRole();
+  const navigate = useNavigate()
 
   // Fetch customers on mount
   useEffect(() => {
@@ -183,14 +185,14 @@ export default function CustomerList() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button
-                            onClick={() => window.location.href = `/customers/${customer.id}`}
+                            onClick={() => navigate(`/customers/${customer.id}`)}
                             className="text-blue-600 hover:text-blue-900 mr-4"
                         >
                           Szczegóły
                         </button>
                         {canModify && (
                             <button
-                                onClick={() => window.location.href = `/customers/${customer.id}/edit`}
+                                onClick={() => navigate(`/customers/${customer.id}/edit`)}
                                 className="text-indigo-600 hover:text-indigo-900 mr-4"
                             >
                               Edytuj

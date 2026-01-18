@@ -38,10 +38,43 @@ export default function CustomerForm() {
     }
   };
 
+  const formatPhoneNumber = (value) => {
+    const digits = value.replace(/\D/g, '');
+
+    let number = digits;
+    if (digits.startsWith('48')) {
+      number = digits.substring(2);
+    }
+
+    const part1 = number.substring(0, 3);
+    const part2 = number.substring(3, 6);
+    const part3 = number.substring(6, 9);
+
+    if (number.length > 6) {
+      return `+48 ${part1} ${part2} ${part3}`.trim();
+    } else if (number.length > 3) {
+      return `+48 ${part1} ${part2}`.trim();
+    } else if (number.length > 0) {
+      return `+48 ${part1}`.trim();
+    }
+
+    return value.startsWith('+') ? '+' : ''; // Дозволяємо почати з +
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error for this field
+
+    let finalValue = value;
+
+    if (name === 'phone') {
+      if (value.length < formData.phone.length) {
+        finalValue = value;
+      } else {
+        finalValue = formatPhoneNumber(value);
+      }
+    }
+
+    setFormData(prev => ({ ...prev, [name]: finalValue }));
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -64,8 +97,11 @@ export default function CustomerForm() {
       newErrors.email = 'Email jest nieprawidłowy';
     }
 
-    if (formData.phone && !/^\+?[\d\s-()]+$/.test(formData.phone)) {
-      newErrors.phone = 'Numer telefonu jest nieprawidłowy';
+    if (formData.phone) {
+      const digitsOnly = formData.phone.replace(/\D/g, '');
+      if (digitsOnly.length !== 11 || !formData.phone.startsWith('+48')) {
+        newErrors.phone = 'Numer telefonu musi mieć format +48 123 456 789';
+      }
     }
 
     setErrors(newErrors);

@@ -3,13 +3,35 @@ kind: ConfigMap
 metadata:
   name: app-config
   namespace: crm
+  labels:
+    app: crm-app
+    tier: backend
 data:
   SPRING_PROFILES_ACTIVE: "prod"
-  SPRING_DATASOURCE_URL: "jdbc:mariadb://mysql:3306/crm_db?useSSL=false&serverTimezone=UTC"  # crm_db ← ВАЖЛИВО!
+  SPRING_JACKSON_TIME_ZONE: "Europe/Warsaw"
+  SPRING_JACKSON_SERIALIZATION_WRITE_DATES_AS_TIMESTAMPS: "false"
+  SPRING_JACKSON_DATE_FORMAT: "yyyy-MM-dd'T'HH:mm:ssXXX"
+  SPRING_DATASOURCE_URL: "jdbc:mariadb://mysql:3306/crm_db?useSSL=false&serverTimezone=Europe/Warsaw&createDatabaseIfNotExist=false"
+  SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE: "Europe/Warsaw"
   SPRING_JPA_HIBERNATE_DDL_AUTO: "validate"
   SPRING_JPA_SHOW_SQL: "false"
   SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: "org.hibernate.dialect.MariaDBDialect"
+  SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "false"
   SPRING_LIQUIBASE_ENABLED: "true"
   SPRING_LIQUIBASE_CONTEXTS: "prod"
-  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics"
+  SPRING_LIQUIBASE_CHANGE_LOG: "classpath:db/changelog/master.xml"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics,prometheus"
   MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: "when_authorized"
+  MANAGEMENT_HEALTH_DB_ENABLED: "true"
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+  SERVER_PORT: "8081"
+  SERVER_ERROR_INCLUDE_MESSAGE: "always"
+  SERVER_ERROR_INCLUDE_STACKTRACE: "never"
+  SERVER_COMPRESSION_ENABLED: "true"
+  LOGGING_LEVEL_ROOT: "INFO"
+  LOGGING_LEVEL_COM_CRM: "INFO"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: "WARN"
+  LOGGING_LEVEL_ORG_HIBERNATE: "WARN"
+  LOGGING_LEVEL_LIQUIBASE: "INFO"
+
+

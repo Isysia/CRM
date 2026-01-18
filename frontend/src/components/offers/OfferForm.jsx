@@ -117,153 +117,153 @@ export default function OfferForm() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Ładowanie...</p>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600">Ładowanie...</p>
+          </div>
         </div>
-      </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">
-          {isEditMode ? 'Edytuj ofertę' : 'Nowa oferta'}
-        </h1>
-        <p className="text-gray-600 mt-1">
-          {isEditMode ? 'Zaktualizuj dane oferty' : 'Wypełnij poniższe pola aby utworzyć ofertę'}
-        </p>
-      </div>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-          {error}
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">
+            {isEditMode ? 'Edytuj ofertę' : 'Nowa oferta'}
+          </h1>
+          <p className="text-gray-600 mt-1">
+            {isEditMode ? 'Zaktualizuj dane oferty' : 'Wypełnij poniższe pola aby utworzyć ofertę'}
+          </p>
         </div>
-      )}
 
-      <div className="bg-white rounded-lg shadow p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tytuł oferty *
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.title ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="np. Oferta na system CRM"
-            />
-            {errors.title && (
-              <p className="mt-1 text-sm text-red-600">{errors.title}</p>
-            )}
-          </div>
+        {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+              {error}
+            </div>
+        )}
 
-          {/* Customer */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Klient *
-            </label>
-            <select
-              name="customerId"
-              value={formData.customerId}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.customerId ? 'border-red-500' : 'border-gray-300'
-              }`}
-            >
-              <option value="">Wybierz klienta</option>
-              {customers.map(customer => (
-                <option key={customer.id} value={customer.id}>
-                  {customer.firstName} {customer.lastName} - {customer.email}
-                </option>
-              ))}
-            </select>
-            {errors.customerId && (
-              <p className="mt-1 text-sm text-red-600">{errors.customerId}</p>
-            )}
-          </div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tytuł oferty *
+              </label>
+              <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.title ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="np. Oferta na system CRM"
+              />
+              {errors.title && (
+                  <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+              )}
+            </div>
 
-          {/* Price */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Wartość (PLN) *
-            </label>
-            <input
-              type="number"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              step="0.01"
-              min="0"
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.price ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="10000.00"
-            />
-            {errors.price && (
-              <p className="mt-1 text-sm text-red-600">{errors.price}</p>
-            )}
-          </div>
+            {/* Customer */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Klient *
+              </label>
+              <select
+                  name="customerId"
+                  value={formData.customerId}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.customerId ? 'border-red-500' : 'border-gray-300'
+                  }`}
+              >
+                <option value="">Wybierz klienta</option>
+                {customers.map(customer => (
+                    <option key={customer.id} value={customer.id}>
+                      {customer.firstName} {customer.lastName} - {customer.email}
+                    </option>
+                ))}
+              </select>
+              {errors.customerId && (
+                  <p className="mt-1 text-sm text-red-600">{errors.customerId}</p>
+              )}
+            </div>
 
-          {/* Status */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="DRAFT">Szkic</option>
-              <option value="SENT">Wysłana</option>
-              <option value="ACCEPTED">Zaakceptowana</option>
-              <option value="REJECTED">Odrzucona</option>
-            </select>
-          </div>
+            {/* Price */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Wartość (PLN) *
+              </label>
+              <input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  step="0.01"
+                  min="0"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.price ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="10000.00"
+              />
+              {errors.price && (
+                  <p className="mt-1 text-sm text-red-600">{errors.price}</p>
+              )}
+            </div>
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Opis
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows="4"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Dodatkowe informacje o ofercie..."
-            />
-          </div>
+            {/* Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status
+              </label>
+              <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="DRAFT">Szkic</option>
+                <option value="SENT">Wysłana</option>
+                <option value="ACCEPTED">Zaakceptowana</option>
+                <option value="REJECTED">Odrzucona</option>
+              </select>
+            </div>
 
-          {/* Buttons */}
-          <div className="flex justify-end space-x-4 pt-4">
-            <button
-              type="button"
-              onClick={() => navigate('/offers')}
-              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              Anuluj
-            </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {saving ? 'Zapisywanie...' : (isEditMode ? 'Zaktualizuj' : 'Utwórz')}
-            </button>
-          </div>
-        </form>
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Opis
+              </label>
+              <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows="4"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Dodatkowe informacje o ofercie..."
+              />
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-end space-x-4 pt-4">
+              <button
+                  type="button"
+                  onClick={() => navigate('/offers')}
+                  className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Anuluj
+              </button>
+              <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {saving ? 'Zapisywanie...' : (isEditMode ? 'Zaktualizuj' : 'Utwórz')}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
   );
 }

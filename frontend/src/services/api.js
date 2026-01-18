@@ -1,20 +1,38 @@
+// src/services/api.js
 import axios from 'axios';
-import { API_BASE_URL } from '../utils/constants';
 
-// Create axios instance
+const getBaseURL = () => {
+    // Якщо є env variable (для development)
+    if (import.meta.env.VITE_API_BASE_URL) {
+        return import.meta.env.VITE_API_BASE_URL;
+    }
+
+    // Для production/Kubernetes - завжди використовуй /api
+    return '/api';
+};
+
+// W Kubernetes używamy relative path (/api) który jest proxy przez Nginx
+// W development mode używamy pełnego URL z .env
+const API_BASE_URL = getBaseURL();
+
+console.log('API_BASE_URL:', API_BASE_URL);
+
+// Create axios instance with default config
 const api = axios.create({
     baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
+    // Timeout po 30 sekundach
+    timeout: 30000,
 });
 
-// Request interceptor (додає token до headers)
+// Request interceptor - dodaj Basic Auth jeśli istnieje
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('authToken');
-        if (token && !config.headers.Authorization) {
-            config.headers.Authorization = `Basic ${token}`;
+        const auth = localStorage.getItem('auth');
+        if (auth) {
+            config.headers.Authorization = `Basic ${auth}`;
         }
         return config;
     },
@@ -23,68 +41,86 @@ api.interceptors.request.use(
     }
 );
 
-// Response interceptor (obsługa błędów)
+// Response interceptor - obsługa błędów
 api.interceptors.response.use(
     (response) => response,
     (error) => {
+        // Jeśli 401 Unauthorized, wyloguj użytkownika
         if (error.response?.status === 401) {
-            // Unauthorized - wyloguj
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('user');
+            localStorage.removeItem('auth');
+            localStorage.removeItem('username');
             window.location.href = '/login';
         }
         return Promise.reject(error);
     }
 );
 
-export default api;
-
-// === AUTH API ===
-export const authAPI = {
-    login: async (username, password) => {
-        const token = btoa(`${username}:${password}`);
-
-        // ✅ ВИПРАВЛЕНО: використовуємо /users/me
-        const response = await api.get('/users/me', {
-            headers: {
-                Authorization: `Basic ${token}`,
-            },
-        });
-
-        // ✅ response.data тепер це UserResponseDTO з ролями
-        const user = response.data;
-
-        return { token, user };
-    },
-    logout: () => {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-    },
-};
-
-// === CUSTOMER API ===
+// Export API functions
 export const customerAPI = {
-    getAll: () => api.get('/customers'),
+    getAll: (params) => api.get('/customers', { params }),
     getById: (id) => api.get(`/customers/${id}`),
     create: (data) => api.post('/customers', data),
     update: (id, data) => api.put(`/customers/${id}`, data),
     delete: (id) => api.delete(`/customers/${id}`),
 };
 
-// === OFFER API ===
 export const offerAPI = {
-    getAll: () => api.get('/offers'),
+    getAll: (params) => api.get('/offers', { params }),
     getById: (id) => api.get(`/offers/${id}`),
     create: (data) => api.post('/offers', data),
     update: (id, data) => api.put(`/offers/${id}`, data),
     delete: (id) => api.delete(`/offers/${id}`),
 };
 
-// === TASK API ===
 export const taskAPI = {
-    getAll: () => api.get('/tasks'),
+    getAll: (params) => api.get('/tasks', { params }),
     getById: (id) => api.get(`/tasks/${id}`),
     create: (data) => api.post('/tasks', data),
     update: (id, data) => api.put(`/tasks/${id}`, data),
     delete: (id) => api.delete(`/tasks/${id}`),
+    toggleComplete: (id) => api.patch(`/tasks/${id}/toggle-complete`),
 };
+
+
+
+export const authAPI = {
+    login: async (username, password) => {
+        const credentials = btoa(`${username}:${password}`);
+
+        try {
+            // Test credentials
+            await api.get('/customers', {
+                headers: {
+                    Authorization: `Basic ${credentials}`,
+                },
+            });
+
+            // Зберігаємо auth в localStorage
+            localStorage.setItem('auth', credentials);
+            localStorage.setItem('username', username);
+
+            // Повертаємо правильну структуру для useAuth
+            return {
+                token: credentials,
+                user: {
+                    username,
+                    // Тут можна додати роль якщо backend повертає
+                },
+            };
+        } catch (error) {
+            if (error.response?.status === 401) {
+                throw new Error('Nieprawidłowe dane logowania');
+            }
+            throw new Error('Błąd połączenia z serwerem');
+        }
+    },
+
+    logout: () => {
+        localStorage.removeItem('auth');
+        localStorage.removeItem('username');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+    },
+};
+
+export default api;

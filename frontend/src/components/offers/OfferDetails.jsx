@@ -67,7 +67,7 @@ export default function OfferDetails() {
     };
     const style = styles[status] || styles.DRAFT;
     return (
-      <span className={`px-3 py-1 inline-flex text-sm font-semibold rounded-full ${style.bg} ${style.text}`}>
+        <span className={`px-3 py-1 inline-flex text-sm font-semibold rounded-full ${style.bg} ${style.text}`}>
         {style.label}
       </span>
     );
@@ -78,156 +78,156 @@ export default function OfferDetails() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Ładowanie...</p>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600">Ładowanie...</p>
+          </div>
         </div>
-      </div>
     );
   }
 
   if (error || !offer) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          {error || 'Nie znaleziono oferty'}
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            {error || 'Nie znaleziono oferty'}
+          </div>
+          <button
+              onClick={() => navigate('/offers')}
+              className="mt-4 text-blue-600 hover:text-blue-800"
+          >
+            ← Powrót do listy ofert
+          </button>
         </div>
-        <button
-          onClick={() => navigate('/offers')}
-          className="mt-4 text-blue-600 hover:text-blue-800"
-        >
-          ← Powrót do listy ofert
-        </button>
-      </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-6">
-        <button
-          onClick={() => navigate('/offers')}
-          className="text-blue-600 hover:text-blue-800 mb-4 inline-flex items-center"
-        >
-          ← Powrót do listy
-        </button>
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">{offer.title}</h1>
-            <p className="text-gray-600 mt-1">Szczegóły oferty #{offer.id}</p>
-          </div>
-          <div className="flex space-x-2">
-            {canModify && (
-              <button
-                onClick={() => navigate(`/offers/${id}/edit`)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Edytuj
-              </button>
-            )}
-            {canDelete && (
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Usuń
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Main Info Card */}
-      <div className="bg-white rounded-lg shadow overflow-hidden mb-6">
-        <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800">Informacje podstawowe</h2>
-        </div>
-        <div className="px-6 py-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-6">
+          <button
+              onClick={() => navigate('/offers')}
+              className="text-blue-600 hover:text-blue-800 mb-4 inline-flex items-center"
+          >
+            ← Powrót do listy
+          </button>
+          <div className="flex justify-between items-start">
             <div>
-              <label className="text-sm font-medium text-gray-500">Wartość</label>
-              <p className="mt-1 text-2xl font-bold text-gray-900">
-                {formatCurrency(offer.price)}
-              </p>
+              <h1 className="text-3xl font-bold text-gray-800">{offer.title}</h1>
+              <p className="text-gray-600 mt-1">Szczegóły oferty #{offer.id}</p>
             </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">Status</label>
-              <p className="mt-1">{getStatusBadge(offer.status)}</p>
+            <div className="flex space-x-2">
+              {canModify && (
+                  <button
+                      onClick={() => navigate(`/offers/${id}/edit`)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Edytuj
+                  </button>
+              )}
+              {canDelete && (
+                  <button
+                      onClick={handleDelete}
+                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    Usuń
+                  </button>
+              )}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Customer Info Card */}
-      {customer && (
+        {/* Main Info Card */}
         <div className="bg-white rounded-lg shadow overflow-hidden mb-6">
           <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-800">Klient</h2>
+            <h2 className="text-lg font-semibold text-gray-800">Informacje podstawowe</h2>
           </div>
           <div className="px-6 py-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="text-sm font-medium text-gray-500">Imię i nazwisko</label>
-                <p className="mt-1 text-lg text-gray-900">
-                  {customer.firstName} {customer.lastName}
+                <label className="text-sm font-medium text-gray-500">Wartość</label>
+                <p className="mt-1 text-2xl font-bold text-gray-900">
+                  {formatCurrency(offer.price)}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-500">Email</label>
-                <p className="mt-1 text-lg text-gray-900">{customer.email}</p>
+                <label className="text-sm font-medium text-gray-500">Status</label>
+                <p className="mt-1">{getStatusBadge(offer.status)}</p>
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">Telefon</label>
-                <p className="mt-1 text-lg text-gray-900">{customer.phone || '-'}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Customer Info Card */}
+        {customer && (
+            <div className="bg-white rounded-lg shadow overflow-hidden mb-6">
+              <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-800">Klient</h2>
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">Status klienta</label>
-                <p className="mt-1">
+              <div className="px-6 py-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Imię i nazwisko</label>
+                    <p className="mt-1 text-lg text-gray-900">
+                      {customer.firstName} {customer.lastName}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Email</label>
+                    <p className="mt-1 text-lg text-gray-900">{customer.email}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Telefon</label>
+                    <p className="mt-1 text-lg text-gray-900">{customer.phone || '-'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Status klienta</label>
+                    <p className="mt-1">
                   <span className={`px-3 py-1 inline-flex text-xs font-semibold rounded-full ${
-                    customer.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-                    customer.status === 'LEAD' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-gray-100 text-gray-800'
+                      customer.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                          customer.status === 'LEAD' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-gray-100 text-gray-800'
                   }`}>
                     {customer.status}
                   </span>
-                </p>
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <button
+                      onClick={() => navigate(`/customers/${customer.id}`)}
+                      className="text-blue-600 hover:text-blue-800"
+                  >
+                    Zobacz profil klienta →
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="mt-4">
-              <button
-                onClick={() => navigate(`/customers/${customer.id}`)}
-                className="text-blue-600 hover:text-blue-800"
-              >
-                Zobacz profil klienta →
-              </button>
+        )}
+
+        {/* Description Card */}
+        {offer.description && (
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-800">Opis</h2>
+              </div>
+              <div className="px-6 py-4">
+                <p className="text-gray-700 whitespace-pre-wrap">{offer.description}</p>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Description Card */}
-      {offer.description && (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-800">Opis</h2>
-          </div>
-          <div className="px-6 py-4">
-            <p className="text-gray-700 whitespace-pre-wrap">{offer.description}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Timestamps */}
-      <div className="mt-6 text-sm text-gray-500">
-        {offer.createdAt && (
-          <p>Utworzono: {new Date(offer.createdAt).toLocaleString('pl-PL')}</p>
         )}
-        {offer.updatedAt && (
-          <p>Ostatnia aktualizacja: {new Date(offer.updatedAt).toLocaleString('pl-PL')}</p>
-        )}
+
+        {/* Timestamps */}
+        <div className="mt-6 text-sm text-gray-500">
+          {offer.createdAt && (
+              <p>Utworzono: {new Date(offer.createdAt).toLocaleString('pl-PL')}</p>
+          )}
+          {offer.updatedAt && (
+              <p>Ostatnia aktualizacja: {new Date(offer.updatedAt).toLocaleString('pl-PL')}</p>
+          )}
+        </div>
       </div>
-    </div>
   );
 }

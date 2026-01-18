@@ -9,10 +9,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check if user is logged in
-    const token = localStorage.getItem('authToken');
-    const savedUser = localStorage.getItem('user');
-    if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
+    const token = localStorage.getItem('auth'); // Змінено з 'authToken' на 'auth'
+    const username = localStorage.getItem('username');
+
+    if (token && username) {
+      setUser({ username }); // Створюємо user object
     }
     setLoading(false);
   }, []);
@@ -20,14 +21,13 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const { token, user } = await authAPI.login(username, password);
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      // authAPI.login вже зберігає все в localStorage
       setUser(user);
       return { success: true };
     } catch (error) {
       return {
         success: false,
-        error: 'Nieprawidłowa nazwa użytkownika lub hasło'
+        error: error.message || 'Nieprawidłowa nazwa użytkownika lub hasło'
       };
     }
   };

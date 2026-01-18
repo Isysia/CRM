@@ -31,11 +31,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                //.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         // H2 Console
                         .requestMatchers("/h2-console/**").permitAll()
+
+                        .requestMatchers("/actuator/**").permitAll()
 
                         // User info endpoint (для логіну)
                         .requestMatchers("/api/users/me").authenticated()
@@ -71,10 +74,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",      // Vite dev server
+                "http://localhost:30080",     // Kubernetes NodePort ← ДОДАЙ ЦЕЙ!
+                "http://localhost:3000",      // Альтернативний dev port
+                "http://localhost:8080"       // Backend (для testing)
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

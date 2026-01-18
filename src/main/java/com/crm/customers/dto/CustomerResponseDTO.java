@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * DTO for returning Customer data to clients.
@@ -24,6 +23,6 @@ public class CustomerResponseDTO {
     private String email;
     private String phone;
     private CustomerStatus status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private ZonedDateTime createdAt;
+    private ZonedDateTime updatedAt;
 }

@@ -3,27 +3,66 @@ kind: Deployment
 metadata:
   name: mysql
   namespace: crm
+  labels:
+    app: mysql
+    tier: database
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: mysql
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
         app: mysql
+        tier: database
     spec:
       containers:
         - name: mysql
           image: mariadb:11.2
           ports:
             - containerPort: 3306
+              name: mysql
           envFrom:
             - secretRef:
                 name: mysql-secret
+          env:
+            - name: MARIADB_AUTO_UPGRADE
+              value: "1"
+            - name: MARIADB_INITDB_SKIP_TZINFO
+              value: "1"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
           volumeMounts:
-            - mountPath: /var/lib/mysql
-              name: mysql-data
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "mariadb-admin ping -h localhost -u root -p${MARIADB_ROOT_PASSWORD}"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "mariadb -h localhost -u ${MARIADB_USER} -p${MARIADB_PASSWORD} -e 'SELECT 1'"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
       volumes:
         - name: mysql-data
           persistentVolumeClaim:
