@@ -40,10 +40,9 @@ public class User {
     private String email;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
-    private Set<Role> roles = new HashSet<>();
+    private Set<String> roles = new HashSet<>();
 
     @Column(nullable = false)
     private Boolean enabled = true;
@@ -59,16 +58,15 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    // Helper methods
-    public void addRole(Role role) {
+    public void addRole(String role) {
         this.roles.add(role);
     }
 
-    public void removeRole(Role role) {
+    public void removeRole(String role) {
         this.roles.remove(role);
     }
 
-    public boolean hasRole(Role role) {
+    public boolean hasRole(String role) {
         return this.roles.contains(role);
     }
 }

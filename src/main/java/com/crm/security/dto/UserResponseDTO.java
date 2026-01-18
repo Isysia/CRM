@@ -1,6 +1,5 @@
 package com.crm.security.dto;
 
-import com.crm.security.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +17,7 @@ public class UserResponseDTO {
     private Long id;
     private String username;
     private String email;
-    private Set<Role> roles;
+    private Set<String> roles;
     private Boolean enabled;
     private Boolean accountNonLocked;
     private LocalDateTime createdAt;

@@ -55,7 +55,7 @@ class UserControllerIntegrationTest {
         testUser.setUsername("testuser");
         testUser.setPassword(passwordEncoder.encode("password123"));
         testUser.setEmail("test@example.com");
-        testUser.setRoles(new HashSet<>(Set.of(Role.ROLE_USER)));
+        testUser.setRoles(new HashSet<>(Set.of(Role.ROLE_USER.name())));
         testUser.setEnabled(true);
         testUser.setAccountNonLocked(true);
         testUser = userRepository.save(testUser);
@@ -70,7 +70,7 @@ class UserControllerIntegrationTest {
         requestDTO.setUsername("newuser");
         requestDTO.setPassword("newpass123");
         requestDTO.setEmail("newuser@example.com");
-        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_MANAGER)));
+        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_MANAGER.name())));
 
         // When & Then
         mockMvc.perform(post("/api/users")
@@ -96,7 +96,7 @@ class UserControllerIntegrationTest {
         requestDTO.setUsername("");
         requestDTO.setPassword("password123");
         requestDTO.setEmail("test@example.com");
-        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER)));
+        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_ADMIN.name())));
 
         // When & Then
         mockMvc.perform(post("/api/users")
@@ -117,7 +117,7 @@ class UserControllerIntegrationTest {
         requestDTO.setUsername("ab");
         requestDTO.setPassword("password123");
         requestDTO.setEmail("test@example.com");
-        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER)));
+        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER.name())));
 
         // When & Then
         mockMvc.perform(post("/api/users")
@@ -137,7 +137,7 @@ class UserControllerIntegrationTest {
         requestDTO.setUsername("validuser");
         requestDTO.setPassword("12345");
         requestDTO.setEmail("test@example.com");
-        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER)));
+        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER.name())));
 
         // When & Then
         mockMvc.perform(post("/api/users")
@@ -157,7 +157,7 @@ class UserControllerIntegrationTest {
         requestDTO.setUsername("validuser");
         requestDTO.setPassword("password123");
         requestDTO.setEmail("invalid-email");
-        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER)));
+        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER.name())));
 
         // When & Then
         mockMvc.perform(post("/api/users")
@@ -177,7 +177,7 @@ class UserControllerIntegrationTest {
         requestDTO.setUsername("testuser"); // Already exists
         requestDTO.setPassword("password123");
         requestDTO.setEmail("different@example.com");
-        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER)));
+        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER.name())));
 
         // When & Then
         mockMvc.perform(post("/api/users")
@@ -198,7 +198,7 @@ class UserControllerIntegrationTest {
         requestDTO.setUsername("differentuser");
         requestDTO.setPassword("password123");
         requestDTO.setEmail("test@example.com"); // Already exists
-        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER)));
+        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER.name())));
 
         // When & Then
         mockMvc.perform(post("/api/users")
@@ -219,7 +219,7 @@ class UserControllerIntegrationTest {
         requestDTO.setUsername("newuser");
         requestDTO.setPassword("password123");
         requestDTO.setEmail("newuser@example.com");
-        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER)));
+        requestDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER.name())));
 
         // When & Then
         mockMvc.perform(post("/api/users")
@@ -289,7 +289,7 @@ class UserControllerIntegrationTest {
         updateDTO.setUsername("updateduser");
         updateDTO.setPassword("newpassword123");
         updateDTO.setEmail("updated@example.com");
-        updateDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_MANAGER)));
+        updateDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_MANAGER.name())));
 
         // When & Then
         mockMvc.perform(put("/api/users/{id}", testUser.getId())
@@ -312,7 +312,7 @@ class UserControllerIntegrationTest {
         updateDTO.setUsername("updateduser");
         updateDTO.setPassword("password123");
         updateDTO.setEmail("updated@example.com");
-        updateDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER)));
+        updateDTO.setRoles(new HashSet<>(Set.of(Role.ROLE_USER.name())));
 
         // When & Then
         mockMvc.perform(put("/api/users/{id}", 999L)

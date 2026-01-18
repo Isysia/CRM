@@ -1,6 +1,5 @@
 package com.crm.security.dto;
 
-import com.crm.security.model.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -29,5 +28,5 @@ public class UserRequestDTO {
     private String email;
 
     @NotEmpty(message = "At least one role is required")
-    private Set<Role> roles;
+    private Set<String> roles;
 }

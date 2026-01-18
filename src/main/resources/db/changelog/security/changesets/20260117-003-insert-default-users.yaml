@@ -5,6 +5,7 @@ databaseChangeLog:
       context: dev
       changes:
 
+        # ADMIN user
         - insert:
             tableName: users
             columns:
@@ -33,7 +34,7 @@ databaseChangeLog:
                   name: role
                   value: ROLE_ADMIN
 
-
+        # MANAGER user
         - insert:
             tableName: users
             columns:
@@ -42,7 +43,7 @@ databaseChangeLog:
                   value: manager
               - column:
                   name: password
-                  value: $2a$10$DxNJ9dGe4bXVPCp8Yx.NHO8KM8s4WE9Pn7RGUKf9NQK5f3AvzPmPq
+                  value: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
               - column:
                   name: email
                   value: manager@crm.com
@@ -62,7 +63,7 @@ databaseChangeLog:
                   name: role
                   value: ROLE_MANAGER
 
-
+        # USER
         - insert:
             tableName: users
             columns:
@@ -71,7 +72,7 @@ databaseChangeLog:
                   value: user
               - column:
                   name: password
-                  value: $2a$10$eZQF8K6WQCdcXQqMpP1cBeP8e7QqH2Q2B0T1KfOo.8vFQZKxTxVhW
+                  value: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
               - column:
                   name: email
                   value: user@crm.com

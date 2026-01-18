@@ -28,7 +28,22 @@
 </body>
 </html>
 
-git add -A
 
+🔐 1. Security Configuration
+src/main/java/com/crm/config/SecurityConfig.java
 
-git push
+👤 2. User Model
+src/main/java/com/crm/security/model/User.java
+src/main/java/com/crm/security/model/Role.java
+
+📊 3. User Repository
+src/main/java/com/crm/security/repository/UserRepository.java
+
+🔧 4. CustomUserDetailsService
+src/main/java/com/crm/security/service/CustomUserDetailsService.java
+
+🗃️ 5. Liquibase User Creation
+src/main/resources/db/changelog/security/changesets/20260117-003-insert-default-users.yaml
+
+🐳 6. Dockerfile (перевіримо -DskipTests)
+Dockerfile
