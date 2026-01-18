@@ -3,91 +3,66 @@ databaseChangeLog:
       id: 20260117-003-insert-default-users
       author: Serhii
       context: dev
+
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          sqlCheck:
+            expectedResult: 0
+            sql: "SELECT COUNT(*) FROM users WHERE username IN ('admin','manager','user')"
+
       changes:
 
-        # ADMIN user
+        # ADMIN
         - insert:
             tableName: users
             columns:
-              - column:
-                  name: username
-                  value: admin
-              - column:
-                  name: password
-                  value: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
-              - column:
-                  name: email
-                  value: admin@crm.com
-              - column:
-                  name: enabled
-                  valueBoolean: true
-              - column:
-                  name: account_non_locked
-                  valueBoolean: true
+              - column: { name: username, value: admin }
+              - column: { name: password, value: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy }
+              - column: { name: email, value: admin@crm.com }
+              - column: { name: enabled, valueBoolean: true }
+              - column: { name: account_non_locked, valueBoolean: true }
+
         - insert:
             tableName: user_roles
             columns:
               - column:
                   name: user_id
                   valueComputed: "(SELECT id FROM users WHERE username = 'admin')"
-              - column:
-                  name: role
-                  value: ROLE_ADMIN
+              - column: { name: role, value: ROLE_ADMIN }
 
-        # MANAGER user
+        # MANAGER
         - insert:
             tableName: users
             columns:
-              - column:
-                  name: username
-                  value: manager
-              - column:
-                  name: password
-                  value: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
-              - column:
-                  name: email
-                  value: manager@crm.com
-              - column:
-                  name: enabled
-                  valueBoolean: true
-              - column:
-                  name: account_non_locked
-                  valueBoolean: true
+              - column: { name: username, value: manager }
+              - column: { name: password, value: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy }
+              - column: { name: email, value: manager@crm.com }
+              - column: { name: enabled, valueBoolean: true }
+              - column: { name: account_non_locked, valueBoolean: true }
+
         - insert:
             tableName: user_roles
             columns:
               - column:
                   name: user_id
                   valueComputed: "(SELECT id FROM users WHERE username = 'manager')"
-              - column:
-                  name: role
-                  value: ROLE_MANAGER
+              - column: { name: role, value: ROLE_MANAGER }
 
         # USER
         - insert:
             tableName: users
             columns:
-              - column:
-                  name: username
-                  value: user
-              - column:
-                  name: password
-                  value: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
-              - column:
-                  name: email
-                  value: user@crm.com
-              - column:
-                  name: enabled
-                  valueBoolean: true
-              - column:
-                  name: account_non_locked
-                  valueBoolean: true
+              - column: { name: username, value: user }
+              - column: { name: password, value: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy }
+              - column: { name: email, value: user@crm.com }
+              - column: { name: enabled, valueBoolean: true }
+              - column: { name: account_non_locked, valueBoolean: true }
+
         - insert:
             tableName: user_roles
             columns:
               - column:
                   name: user_id
                   valueComputed: "(SELECT id FROM users WHERE username = 'user')"
-              - column:
-                  name: role
-                  value: ROLE_USER
+              - column: { name: role, value: ROLE_USER }

@@ -31,45 +31,40 @@ public class DataInitializer {
 
             log.info("Initializing default users...");
 
-            // Create ADMIN user
+            // ✅ ADMIN - з префіксом ROLE_
             User admin = new User();
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("password"));
             admin.setEmail("admin@crm.com");
-            admin.setRoles(Set.of(Role.ROLE_ADMIN.name()));
+            admin.setRoles(Set.of("ROLE_ADMIN"));  // ← ДОДАЙ ROLE_
             admin.setEnabled(true);
             admin.setAccountNonLocked(true);
             userRepository.save(admin);
             log.info("Created ADMIN user: username=admin, password=password");
 
-            // Create MANAGER user
+            // ✅ MANAGER - з префіксом ROLE_
             User manager = new User();
             manager.setUsername("manager");
             manager.setPassword(passwordEncoder.encode("password"));
             manager.setEmail("manager@crm.com");
-            manager.setRoles(Set.of(Role.ROLE_MANAGER.name()));
+            manager.setRoles(Set.of("ROLE_MANAGER"));  // ← ДОДАЙ ROLE_
             manager.setEnabled(true);
             manager.setAccountNonLocked(true);
             userRepository.save(manager);
             log.info("Created MANAGER user: username=manager, password=password");
 
-            // Create USER (read-only)
+            // ✅ USER - з префіксом ROLE_
             User user = new User();
             user.setUsername("user");
             user.setPassword(passwordEncoder.encode("password"));
             user.setEmail("user@crm.com");
-            user.setRoles(Set.of(Role.ROLE_USER.name()));
+            user.setRoles(Set.of("ROLE_USER"));  // ← ДОДАЙ ROLE_
             user.setEnabled(true);
             user.setAccountNonLocked(true);
             userRepository.save(user);
             log.info("Created USER (read-only): username=user, password=password");
 
             log.info("Default users initialized successfully!");
-            log.info("=== Test Credentials ===");
-            log.info("ADMIN    -> username: admin,   password: password");
-            log.info("MANAGER  -> username: manager, password: password");
-            log.info("USER     -> username: user,    password: password");
-            log.info("========================");
         };
     }
 }

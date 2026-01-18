@@ -199,22 +199,19 @@ public class TaskServiceImpl implements TaskService {
             return; // No change
         }
 
+        /*// ✅ ВИДАЛИ ЦЮ ПЕРЕВІРКУ - дозволяємо реверт з DONE
         // Allow reverting to TODO from any status
         if (newStatus == TaskStatus.TODO) {
             return;
-        }
+        }*/
 
-        // Validate forward transitions
+        /*// Validate forward transitions
         if (currentStatus == TaskStatus.TODO && newStatus == TaskStatus.DONE) {
             throw new IllegalArgumentException(
                     "Cannot change status from TODO to DONE directly. Must go through IN_PROGRESS"
             );
-        }
+        }*/
 
-        if (currentStatus == TaskStatus.DONE) {
-            throw new IllegalArgumentException(
-                    "Cannot change status from DONE. Task is already completed"
-            );
-        }
     }
 }
+

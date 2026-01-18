@@ -22,7 +22,6 @@ public class TaskRequestDTO {
     private String description;
 
     @NotNull(message = "Due date is required")
-    @Future(message = "Due date must be in the future")
     private LocalDateTime dueDate;
 
     @NotNull(message = "Status is required")

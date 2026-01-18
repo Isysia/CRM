@@ -25,9 +25,9 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        error: 'Nieprawidłowa nazwa użytkownika lub hasło' 
+      return {
+        success: false,
+        error: 'Nieprawidłowa nazwa użytkownika lub hasło'
       };
     }
   };
@@ -38,9 +38,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {children}
-    </AuthContext.Provider>
+      <AuthContext.Provider value={{ user, login, logout, loading }}>
+        {children}
+      </AuthContext.Provider>
   );
 };
 

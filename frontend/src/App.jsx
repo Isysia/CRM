@@ -1,9 +1,18 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './hooks/useAuth';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LoginPage from './components/auth/LoginPage';
 import Navbar from './components/layout/Navbar';
 import Dashboard from './components/layout/Dashboard';
+import CustomerList from './components/customers/CustomerList';
+import CustomerForm from './components/customers/CustomerForm';
+import CustomerDetails from './components/customers/CustomerDetails';
+import OfferList from './components/offers/OfferList';
+import OfferForm from './components/offers/OfferForm';
+import OfferDetails from './components/offers/OfferDetails';
+import TaskList from './components/tasks/TaskList';
+import TaskForm from './components/tasks/TaskForm';
+import TaskDetails from './components/tasks/TaskDetails';
 
 function App() {
   return (
@@ -20,9 +29,24 @@ function App() {
                   <Navbar />
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
-                    <Route path="/customers" element={<PlaceholderPage title="Klienci" />} />
-                    <Route path="/offers" element={<PlaceholderPage title="Oferty" />} />
-                    <Route path="/tasks" element={<PlaceholderPage title="Zadania" />} />
+                    
+                    {/* Customers */}
+                    <Route path="/customers" element={<CustomerList />} />
+                    <Route path="/customers/new" element={<CustomerForm />} />
+                    <Route path="/customers/:id" element={<CustomerDetails />} />
+                    <Route path="/customers/:id/edit" element={<CustomerForm />} />
+                    
+                    {/* Offers */}
+                    <Route path="/offers" element={<OfferList />} />
+                    <Route path="/offers/new" element={<OfferForm />} />
+                    <Route path="/offers/:id" element={<OfferDetails />} />
+                    <Route path="/offers/:id/edit" element={<OfferForm />} />
+                    
+                    {/* Tasks */}
+                    <Route path="/tasks" element={<TaskList />} />
+                    <Route path="/tasks/new" element={<TaskForm />} />
+                    <Route path="/tasks/:id" element={<TaskDetails />} />
+                    <Route path="/tasks/:id/edit" element={<TaskForm />} />
                   </Routes>
                 </div>
               </ProtectedRoute>
@@ -31,19 +55,6 @@ function App() {
         </Routes>
       </AuthProvider>
     </BrowserRouter>
-  );
-}
-
-// Temporary placeholder component
-function PlaceholderPage({ title }) {
-  return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">{title}</h1>
-      <div className="bg-white rounded-lg shadow p-8 text-center">
-        <p className="text-gray-600 text-lg">🚧 Strona w budowie</p>
-        <p className="text-gray-500 mt-2">Ta sekcja zostanie wkrótce dodana</p>
-      </div>
-    </div>
   );
 }
 

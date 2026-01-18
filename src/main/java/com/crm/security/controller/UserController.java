@@ -2,6 +2,10 @@ package com.crm.security.controller;
 
 import com.crm.security.dto.UserRequestDTO;
 import com.crm.security.dto.UserResponseDTO;
+import com.crm.security.exceptions.UserNotFoundException;
+import com.crm.security.model.User;
+import com.crm.security.repository.UserRepository;
+import com.crm.security.mapper.UserMapper;
 import com.crm.security.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +26,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -101,5 +109,12 @@ public class UserController {
         log.info("PATCH /api/users/{}/unlock - Unlocking user", id);
         userService.unlockUser(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getCurrentUser(Authentication authentication) {
+        String username = authentication.getName();
+        UserResponseDTO user = userService.getUserByUsername(username);
+        return ResponseEntity.ok(user);
     }
 }

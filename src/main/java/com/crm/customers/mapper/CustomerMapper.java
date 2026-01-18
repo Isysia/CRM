@@ -5,6 +5,8 @@ import com.crm.customers.dto.CustomerResponseDTO;
 import com.crm.customers.model.Customer;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 /**
  * Mapper for converting between Customer Entity and DTOs.
  * Manual mapping (no MapStruct) for simplicity.
@@ -36,6 +38,8 @@ public class CustomerMapper {
                 .email(entity.getEmail())
                 .phone(entity.getPhone())
                 .status(entity.getStatus())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
                 .build();
     }
 

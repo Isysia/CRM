@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260118-001-add-timestamps-to-customers
+      author: Serhii
+
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: customers
+            columnName: created_at
+
+      changes:
+        - addColumn:
+            tableName: customers
+            columns:
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - sql:
+            sql: >
+              ALTER TABLE customers
+              MODIFY COLUMN updated_at TIMESTAMP NOT NULL
+              DEFAULT CURRENT_TIMESTAMP
+              ON UPDATE CURRENT_TIMESTAMP

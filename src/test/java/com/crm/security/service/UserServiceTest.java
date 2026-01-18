@@ -56,7 +56,7 @@ class UserServiceTest {
         testUser.setUsername("testuser");
         testUser.setPassword("encodedPassword");
         testUser.setEmail("test@example.com");
-        testUser.setRoles(Set.of(Role.ROLE_USER.name()));
+        testUser.setRoles(Set.of(Role.USER.name()));
         testUser.setEnabled(true);
         testUser.setAccountNonLocked(true);
         testUser.setCreatedAt(LocalDateTime.now());
@@ -67,13 +67,13 @@ class UserServiceTest {
         testRequestDTO.setUsername("testuser");
         testRequestDTO.setPassword("password123");
         testRequestDTO.setEmail("test@example.com");
-        testRequestDTO.setRoles(Set.of(Role.ROLE_USER.name()));
+        testRequestDTO.setRoles(Set.of(Role.USER.name()));
 
         testResponseDTO = UserResponseDTO.builder()
                 .id(1L)
                 .username("testuser")
                 .email("test@example.com")
-                .roles(Set.of(Role.ROLE_USER.name()))
+                .roles(Set.of(Role.USER.name()))
                 .enabled(true)
                 .accountNonLocked(true)
                 .createdAt(testUser.getCreatedAt())

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * DTO for returning Customer data to clients.
  * Used in GET responses.
@@ -22,4 +24,6 @@ public class CustomerResponseDTO {
     private String email;
     private String phone;
     private CustomerStatus status;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

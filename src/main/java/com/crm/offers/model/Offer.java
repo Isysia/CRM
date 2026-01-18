@@ -36,7 +36,6 @@ public class Offer {
     @Column(nullable = false)
     private OfferStatus status;
 
-    // ✅ ЗВ'ЯЗОК: кожна пропозиція належить одному клієнту
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
