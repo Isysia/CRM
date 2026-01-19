@@ -1,63 +1,47 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { customerAPI, offerAPI, taskAPI } from '../../services/api';
+import { useApi } from '../../hooks/useApi'; // Імпортуємо наш хук
 
 export default function Dashboard() {
   const { user } = useAuth();
   const [stats, setStats] = useState({
-    totalCustomers: 0,
-    activeCustomers: 0,
-    totalOffers: 0,
-    activeOffers: 0,
-    totalTasks: 0,
-    todoTasks: 0,
-    overdueTasks: 0
+    totalCustomers: 0, activeCustomers: 0,
+    totalOffers: 0, activeOffers: 0,
+    totalTasks: 0, todoTasks: 0, overdueTasks: 0
   });
-  const [loading, setLoading] = useState(true);
+
+  // Об'єднуємо всі запити в один для хука
+  const fetchAllStats = () => Promise.all([
+    customerAPI.getAll(),
+    offerAPI.getAll(),
+    taskAPI.getAll()
+  ]);
+
+  const { loading, error, execute: loadStats } = useApi(fetchAllStats);
 
   useEffect(() => {
-    fetchStats();
+    const initDashboard = async () => {
+      const results = await loadStats();
+      if (results) {
+        const [cRes, oRes, tRes] = results;
+        processStats(cRes.data, oRes.data, tRes.data);
+      }
+    };
+    initDashboard();
   }, []);
 
-  const fetchStats = async () => {
-    try {
-      setLoading(true);
-
-      const [customersRes, offersRes, tasksRes] = await Promise.all([
-        customerAPI.getAll(),
-        offerAPI.getAll(),
-        taskAPI.getAll()
-      ]);
-
-      const customers = customersRes.data;
-      const offers = offersRes.data;
-      const tasks = tasksRes.data;
-
-      const activeCustomers = customers.filter(c => c.status === 'ACTIVE').length;
-      const activeOffers = offers.filter(o => o.status === 'SENT' || o.status === 'DRAFT').length;
-      const todoTasks = tasks.filter(t => t.status === 'TODO' || t.status === 'IN_PROGRESS').length;
-
-      const now = new Date();
-      const overdueTasks = tasks.filter(t => {
-        if (t.status === 'DONE') return false;
-        const dueDate = parseDate(t.dueDate);
-        return dueDate < now;
-      }).length;
-
-      setStats({
-        totalCustomers: customers.length,
-        activeCustomers,
-        totalOffers: offers.length,
-        activeOffers,
-        totalTasks: tasks.length,
-        todoTasks,
-        overdueTasks
-      });
-    } catch (err) {
-      console.error('Error fetching stats:', err);
-    } finally {
-      setLoading(false);
-    }
+  const processStats = (customers, offers, tasks) => {
+    const now = new Date();
+    setStats({
+      totalCustomers: customers.length,
+      activeCustomers: customers.filter(c => c.status === 'ACTIVE').length,
+      totalOffers: offers.length,
+      activeOffers: offers.filter(o => ['SENT', 'DRAFT'].includes(o.status)).length,
+      totalTasks: tasks.length,
+      todoTasks: tasks.filter(t => ['TODO', 'IN_PROGRESS'].includes(t.status)).length,
+      overdueTasks: tasks.filter(t => t.status !== 'DONE' && parseDate(t.dueDate) < now).length
+    });
   };
 
   const parseDate = (dateValue) => {
@@ -72,10 +56,10 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="mt-4 text-gray-600">Ładowanie statystyk...</p>
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-xl font-medium text-gray-700">Ładowanie statystyk...</p>
           </div>
         </div>
     );

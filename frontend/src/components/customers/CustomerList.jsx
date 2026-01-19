@@ -1,48 +1,36 @@
 import { useState, useEffect } from 'react';
 import { customerAPI } from '../../services/api';
-import { useAuth } from '../../hooks/useAuth';
 import { useRole } from '../../hooks/useRole';
+import { useApi } from '../../hooks/useApi'; // Додаємо імпорт
 import { useNavigate } from 'react-router-dom';
 
 export default function CustomerList() {
   const [customers, setCustomers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
-  const { isManager, isAdmin } = useRole();
-  const navigate = useNavigate()
 
-  // Fetch customers on mount
+  const { isManager, isAdmin } = useRole();
+  const navigate = useNavigate();
+
+  // Використовуємо наш новий хук
+  const { loading, error, execute: fetchCustomersExec } = useApi(customerAPI.getAll);
+
   useEffect(() => {
-    fetchCustomers();
+    loadCustomers();
   }, []);
 
-  const fetchCustomers = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await customerAPI.getAll();
-      setCustomers(response.data);
-    } catch (err) {
-      setError('Nie udało się załadować klientów');
-      console.error('Error fetching customers:', err);
-    } finally {
-      setLoading(false);
-    }
+  const loadCustomers = async () => {
+    const data = await fetchCustomersExec();
+    if (data) setCustomers(data);
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Czy na pewno chcesz usunąć tego klienta?')) {
-      return;
-    }
-
+    if (!window.confirm('Czy na pewno chcesz usunąć tego klienta?')) return;
     try {
       await customerAPI.delete(id);
       setCustomers(customers.filter(c => c.id !== id));
     } catch (err) {
       alert('Nie udało się usunąć klienta');
-      console.error('Error deleting customer:', err);
     }
   };
 

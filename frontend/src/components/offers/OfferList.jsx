@@ -5,15 +5,22 @@ import { useRole } from '../../hooks/useRole';
 export default function OfferList() {
   const [offers, setOffers] = useState([]);
   const [customers, setCustomers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('ALL');
-  const [filterCustomer, setFilterCustomer] = useState('ALL');
+
   const { isManager, isAdmin } = useRole();
 
+  // Створюємо функцію, яка об'єднує запити для хука
+  const fetchAllData = () => Promise.all([offerAPI.getAll(), customerAPI.getAll()]);
+  const { loading, error, execute: loadAll } = useApi(fetchAllData);
+
   useEffect(() => {
-    fetchData();
+    const init = async () => {
+      const results = await loadAll();
+      if (results) {
+        setOffers(results[0].data);
+        setCustomers(results[1].data);
+      }
+    };
+    init();
   }, []);
 
   const fetchData = async () => {
