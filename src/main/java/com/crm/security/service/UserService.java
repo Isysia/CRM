@@ -1,5 +1,7 @@
 package com.crm.security.service;
 
+import com.crm.security.dto.ChangeRoleRequest;
+import com.crm.security.dto.RegisterRequest;
 import com.crm.security.dto.UserRequestDTO;
 import com.crm.security.dto.UserResponseDTO;
 
@@ -26,4 +28,8 @@ public interface UserService {
     void lockUser(Long id);
 
     void unlockUser(Long id);
+
+    void registerNewUser(RegisterRequest request);
+
+    void changeUserRole(Long id, ChangeRoleRequest request);
 }

@@ -45,7 +45,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(User user) {
         return user.getRoles().stream()
-                .map(SimpleGrantedAuthority::new)
+                .map(role -> {
+                    // ✅ FIX: Додаємо префікс ROLE_, якщо його немає
+                    if (role.startsWith("ROLE_")) {
+                        return new SimpleGrantedAuthority(role);
+                    } else {
+                        return new SimpleGrantedAuthority("ROLE_" + role);
+                    }
+                })
                 .collect(Collectors.toList());
     }
 }

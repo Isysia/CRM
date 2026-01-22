@@ -1,33 +1,21 @@
-// src/services/api.js
 import axios from 'axios';
 
 const getBaseURL = () => {
-    // Якщо є env variable (для development)
     if (import.meta.env.VITE_API_BASE_URL) {
         return import.meta.env.VITE_API_BASE_URL;
     }
-
-    // Для production/Kubernetes - завжди використовуй /api
     return '/api';
 };
 
-// W Kubernetes używamy relative path (/api) który jest proxy przez Nginx
-// W development mode używamy pełnego URL z .env
 const API_BASE_URL = getBaseURL();
-
 console.log('API_BASE_URL:', API_BASE_URL);
 
-// Create axios instance with default config
 const api = axios.create({
     baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    // Timeout po 30 sekundach
+    headers: { 'Content-Type': 'application/json' },
     timeout: 30000,
 });
 
-// Request interceptor - dodaj Basic Auth jeśli istnieje
 api.interceptors.request.use(
     (config) => {
         const auth = localStorage.getItem('auth');
@@ -36,17 +24,13 @@ api.interceptors.request.use(
         }
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
-// Response interceptor - obsługa błędów
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        // Jeśli 401 Unauthorized, wyloguj użytkownika
-        if (error.response?.status === 401) {
+        if (error.response?.status === 401 && !window.location.pathname.includes('/login')) {
             localStorage.removeItem('auth');
             localStorage.removeItem('username');
             window.location.href = '/login';
@@ -55,7 +39,6 @@ api.interceptors.response.use(
     }
 );
 
-// Export API functions
 export const customerAPI = {
     getAll: (params) => api.get('/customers', { params }),
     getById: (id) => api.get(`/customers/${id}`),
@@ -70,6 +53,8 @@ export const offerAPI = {
     create: (data) => api.post('/offers', data),
     update: (id, data) => api.put(`/offers/${id}`, data),
     delete: (id) => api.delete(`/offers/${id}`),
+    // ✅ ДОДАНО: Метод для зміни статусу
+    updateStatus: (id, status) => api.patch(`/offers/${id}/status`, { status }),
 };
 
 export const taskAPI = {
@@ -78,48 +63,37 @@ export const taskAPI = {
     create: (data) => api.post('/tasks', data),
     update: (id, data) => api.put(`/tasks/${id}`, data),
     delete: (id) => api.delete(`/tasks/${id}`),
-    toggleComplete: (id) => api.patch(`/tasks/${id}/toggle-complete`),
+    updateStatus: (id, status) => api.patch(`/tasks/${id}/status`, { status }),
 };
 
-
+export const userAPI = {
+    getAll: () => api.get('/users'),
+    changeRole: (id, role) => api.patch(`/users/${id}/role`, { role }),
+};
 
 export const authAPI = {
     login: async (username, password) => {
         const credentials = btoa(`${username}:${password}`);
-
         try {
-            // Test credentials
-            await api.get('/customers', {
-                headers: {
-                    Authorization: `Basic ${credentials}`,
-                },
+            const res = await api.get('/users/me', {
+                headers: { Authorization: `Basic ${credentials}` },
             });
 
-            // Зберігаємо auth в localStorage
             localStorage.setItem('auth', credentials);
             localStorage.setItem('username', username);
 
-            // Повертаємо правильну структуру для useAuth
-            return {
-                token: credentials,
-                user: {
-                    username,
-                    // Тут можна додати роль якщо backend повертає
-                },
-            };
+            return { token: credentials, user: res.data };
         } catch (error) {
-            if (error.response?.status === 401) {
-                throw new Error('Nieprawidłowe dane logowania');
-            }
+            if (error.response?.status === 401) throw new Error('Nieprawidłowe dane logowania');
             throw new Error('Błąd połączenia z serwerem');
         }
     },
-
+    register: async (data) => {
+        return api.post('/auth/register', data);
+    },
     logout: () => {
         localStorage.removeItem('auth');
         localStorage.removeItem('username');
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
     },
 };
 

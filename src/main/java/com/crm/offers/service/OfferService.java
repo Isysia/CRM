@@ -18,4 +18,6 @@ public interface OfferService {
     OfferResponseDTO updateOffer(Long id, OfferRequestDTO requestDTO);
 
     void deleteOffer(Long id);
+
+    void changeOfferStatus(Long id, String status);
 }

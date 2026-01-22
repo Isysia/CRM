@@ -31,35 +31,40 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                //.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        // H2 Console
+                        // Public endpoints
                         .requestMatchers("/h2-console/**").permitAll()
-
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
 
-                        // User info endpoint (для логіну)
+                        // User info endpoint
                         .requestMatchers("/api/users/me").authenticated()
 
-                        // Customers - ✅ ВСЕ через hasAnyRole
+                        // Customers
                         .requestMatchers(HttpMethod.GET, "/api/customers/**").hasAnyRole("USER", "MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/customers/**").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/customers/**").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/customers/**").hasRole("ADMIN")
 
-                        // Offers - ✅ ВСЕ через hasAnyRole
+                        // Offers
                         .requestMatchers(HttpMethod.GET, "/api/offers/**").hasAnyRole("USER", "MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/offers/**").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/offers/**").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/offers/**").hasRole("ADMIN")
 
-                        // Tasks - ✅ ВСЕ через hasAnyRole
+                        // Tasks
+                        // ✅ FIX: Дозволяємо USER змінювати тільки статус (PATCH)
+                        .requestMatchers(HttpMethod.PATCH, "/api/tasks/*/status").hasAnyRole("USER", "MANAGER", "ADMIN")
+
                         .requestMatchers(HttpMethod.GET, "/api/tasks/**").hasAnyRole("USER", "MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/tasks/**").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/tasks/**").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/tasks/**").hasRole("ADMIN")
+
+                        // Users management
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
@@ -75,12 +80,13 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5173",      // Vite dev server
-                "http://localhost:30080",     // Kubernetes NodePort ← ДОДАЙ ЦЕЙ!
-                "http://localhost:3000",      // Альтернативний dev port
-                "http://localhost:8080"       // Backend (для testing)
+                "http://localhost:5173",
+                "http://localhost:30080",
+                "http://crm.local",
+                "http://localhost:3000",
+                "http://localhost:8080"
         ));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);

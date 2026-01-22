@@ -198,20 +198,22 @@ public class TaskServiceImpl implements TaskService {
         if (currentStatus == newStatus) {
             return; // No change
         }
+    }
 
-        /*// ✅ ВИДАЛИ ЦЮ ПЕРЕВІРКУ - дозволяємо реверт з DONE
-        // Allow reverting to TODO from any status
-        if (newStatus == TaskStatus.TODO) {
-            return;
-        }*/
+    @Override
+    public TaskResponseDTO updateTaskStatus(Long id, TaskStatus newStatus) {
+        log.info("Updating status for task id: {} to {}", id, newStatus);
 
-        /*// Validate forward transitions
-        if (currentStatus == TaskStatus.TODO && newStatus == TaskStatus.DONE) {
-            throw new IllegalArgumentException(
-                    "Cannot change status from TODO to DONE directly. Must go through IN_PROGRESS"
-            );
-        }*/
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException(id));
 
+        // Тут можна додати логіку: Юзер не може перевести з DONE назад в TODO, якщо це потрібно
+        // if (task.getStatus() == TaskStatus.DONE && newStatus == TaskStatus.TODO) { ... }
+
+        task.setStatus(newStatus);
+        Task updatedTask = taskRepository.save(task);
+
+        return taskMapper.toDTO(updatedTask);
     }
 }
 

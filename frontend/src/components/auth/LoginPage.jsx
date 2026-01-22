@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate, Link } from 'react-router-dom'; // Додано Link
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -14,59 +14,50 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-
-    const result = await login(username, password);
-
-    if (result.success) {
+    try {
+      await login(username, password);
       navigate('/');
-    } else {
-      setError(result.error);
+    } catch (err) {
+      setError('Nieprawidłowa nazwa użytkownika lub hasło'); // Повідомлення польською
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              🏢 CRM System
-            </h1>
-            <p className="text-gray-600">Zaloguj się do systemu</p>
-          </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-md w-96">
+          <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Logowanie</h2>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                  {error}
-                </div>
-            )}
+          {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+                {error}
+              </div>
+          )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nazwa użytkownika
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Użytkownik
               </label>
               <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="admin / manager / user"
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
                   required
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="mb-6">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
                 Hasło
               </label>
               <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="password"
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
                   required
               />
             </div>
@@ -74,19 +65,22 @@ export default function LoginPage() {
             <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className={`w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors ${
+                    loading ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
             >
               {loading ? 'Logowanie...' : 'Zaloguj się'}
             </button>
           </form>
 
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-600 mb-2">Testowe konta:</p>
-            <ul className="text-xs text-gray-500 space-y-1">
-              <li>• admin / password (ADMIN)</li>
-              <li>• manager / password (MANAGER)</li>
-              <li>• user / password (USER)</li>
-            </ul>
+          {/* --- НОВА ЧАСТИНА: Посилання на реєстрацію --- */}
+          <div className="mt-4 text-center border-t pt-4">
+            <p className="text-sm text-gray-600">
+              Nie masz konta?{' '}
+              <Link to="/register" className="text-blue-600 hover:text-blue-800 font-medium">
+                Zarejestruj się
+              </Link>
+            </p>
           </div>
         </div>
       </div>

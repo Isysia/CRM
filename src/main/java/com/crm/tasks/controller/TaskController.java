@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -84,5 +85,18 @@ public class TaskController {
         log.info("DELETE /api/tasks/{} - Deleting task", id);
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<TaskResponseDTO> updateTaskStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> statusUpdate) {
+
+        log.info("PATCH /api/tasks/{}/status - Updating status", id);
+
+        String newStatus = statusUpdate.get("status");
+        TaskResponseDTO response = taskService.updateTaskStatus(id, TaskStatus.valueOf(newStatus));
+
+        return ResponseEntity.ok(response);
     }
 }

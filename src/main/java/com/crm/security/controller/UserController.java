@@ -1,11 +1,10 @@
 package com.crm.security.controller;
 
+import com.crm.security.dto.ChangeRoleRequest;
 import com.crm.security.dto.UserRequestDTO;
 import com.crm.security.dto.UserResponseDTO;
-import com.crm.security.exceptions.UserNotFoundException;
-import com.crm.security.model.User;
-import com.crm.security.repository.UserRepository;
 import com.crm.security.mapper.UserMapper;
+import com.crm.security.repository.UserRepository;
 import com.crm.security.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +24,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -40,41 +36,36 @@ public class UserController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
-        log.info("GET /api/users/{} - Fetching user", id);
         UserResponseDTO response = userService.getUserById(id);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/username/{username}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
-        log.info("GET /api/users/username/{} - Fetching user", username);
-        UserResponseDTO response = userService.getUserByUsername(username);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        log.info("GET /api/users - Fetching all users");
         List<UserResponseDTO> response = userService.getAllUsers();
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponseDTO> updateUser(
-            @PathVariable Long id,
-            @Valid @RequestBody UserRequestDTO requestDTO) {
-        log.info("PUT /api/users/{} - Updating user", id);
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDTO requestDTO) {
         UserResponseDTO response = userService.updateUser(id, requestDTO);
         return ResponseEntity.ok(response);
+    }
+
+    // --- Новий ендпоінт для зміни ролі ---
+    @PatchMapping("/{id}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> changeUserRole(@PathVariable Long id, @RequestBody ChangeRoleRequest request) {
+        log.info("PATCH /api/users/{}/role - Changing role to {}", id, request.getRole());
+        userService.changeUserRole(id, request);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        log.info("DELETE /api/users/{} - Deleting user", id);
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

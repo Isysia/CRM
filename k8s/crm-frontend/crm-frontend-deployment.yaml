@@ -7,7 +7,7 @@ metadata:
     app: crm-frontend
     tier: frontend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: crm-frontend
@@ -19,31 +19,30 @@ spec:
     spec:
       containers:
         - name: crm-frontend
-          image: crm-frontend:latest
-          imagePullPolicy: IfNotPresent
+          # 👇 ВАЖЛИВО: Назва має збігатися з тією, що у rebuild.ps1
+          image: crm-frontend-dev:latest
+          # 👇 ВАЖЛИВО: Never змушує використовувати локально зібраний образ
+          imagePullPolicy: Never
           ports:
             - containerPort: 80
               name: http
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
+              memory: "64Mi"
+              cpu: "50m"
             limits:
               memory: "256Mi"
-              cpu: "200m"
+              cpu: "500m"
+          # Nginx відповідає на кореневий запиt, тому міняємо /health на /
           livenessProbe:
             httpGet:
-              path: /health
+              path: /
               port: 80
             initialDelaySeconds: 10
             periodSeconds: 10
-            timeoutSeconds: 3
-            failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /health
+              path: /
               port: 80
             initialDelaySeconds: 5
             periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 2

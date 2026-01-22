@@ -8,6 +8,7 @@ import com.crm.offers.dto.OfferResponseDTO;
 import com.crm.offers.exceptions.OfferNotFoundException;
 import com.crm.offers.mapper.OfferMapper;
 import com.crm.offers.model.Offer;
+import com.crm.offers.model.OfferStatus;
 import com.crm.offers.repository.OfferRepository;
 import com.crm.offers.service.OfferService;
 import lombok.RequiredArgsConstructor;
@@ -113,5 +114,24 @@ public class OfferServiceImpl implements OfferService {
 
         offerRepository.deleteById(id);
         log.info("Offer deleted successfully with id: {}", id);
+    }
+
+    // ✅ НОВИЙ МЕТОД для зміни статусу
+    @Override
+    public void changeOfferStatus(Long id, String status) {
+        log.info("Changing status for offer id: {} to {}", id, status);
+
+        Offer offer = offerRepository.findById(id)
+                .orElseThrow(() -> new OfferNotFoundException(id));
+
+        try {
+            OfferStatus newStatus = OfferStatus.valueOf(status);
+            offer.setStatus(newStatus);
+            offerRepository.save(offer);
+            log.info("Status changed successfully for offer {}", id);
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid status: {}", status);
+            throw new IllegalArgumentException("Nieprawidłowy status: " + status);
+        }
     }
 }

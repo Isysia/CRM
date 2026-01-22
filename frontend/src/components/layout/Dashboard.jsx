@@ -1,38 +1,54 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { customerAPI, offerAPI, taskAPI } from '../../services/api';
-import { useApi } from '../../hooks/useApi'; // Імпортуємо наш хук
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [stats, setStats] = useState({
-    totalCustomers: 0, activeCustomers: 0,
-    totalOffers: 0, activeOffers: 0,
-    totalTasks: 0, todoTasks: 0, overdueTasks: 0
+    totalCustomers: 0,
+    activeCustomers: 0,
+    totalOffers: 0,
+    activeOffers: 0,
+    totalTasks: 0,
+    todoTasks: 0,
+    overdueTasks: 0
   });
 
-  // Об'єднуємо всі запити в один для хука
-  const fetchAllStats = () => Promise.all([
-    customerAPI.getAll(),
-    offerAPI.getAll(),
-    taskAPI.getAll()
-  ]);
-
-  const { loading, error, execute: loadStats } = useApi(fetchAllStats);
-
   useEffect(() => {
-    const initDashboard = async () => {
-      const results = await loadStats();
-      if (results) {
-        const [cRes, oRes, tRes] = results;
-        processStats(cRes.data, oRes.data, tRes.data);
-      }
-    };
-    initDashboard();
+    loadStats();
   }, []);
+
+  const loadStats = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // ✅ Виконуємо всі запити паралельно
+      const [customersRes, offersRes, tasksRes] = await Promise.all([
+        customerAPI.getAll(),
+        offerAPI.getAll(),
+        taskAPI.getAll()
+      ]);
+
+      // ✅ Обробляємо отримані дані
+      processStats(
+          customersRes.data || [],
+          offersRes.data || [],
+          tasksRes.data || []
+      );
+    } catch (err) {
+      console.error('Failed to load dashboard stats:', err);
+      setError('Nie udało się załadować statystyk');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const processStats = (customers, offers, tasks) => {
     const now = new Date();
+
     setStats({
       totalCustomers: customers.length,
       activeCustomers: customers.filter(c => c.status === 'ACTIVE').length,
@@ -40,7 +56,11 @@ export default function Dashboard() {
       activeOffers: offers.filter(o => ['SENT', 'DRAFT'].includes(o.status)).length,
       totalTasks: tasks.length,
       todoTasks: tasks.filter(t => ['TODO', 'IN_PROGRESS'].includes(t.status)).length,
-      overdueTasks: tasks.filter(t => t.status !== 'DONE' && parseDate(t.dueDate) < now).length
+      overdueTasks: tasks.filter(t => {
+        if (t.status === 'DONE') return false;
+        const dueDate = parseDate(t.dueDate);
+        return dueDate < now;
+      }).length
     });
   };
 
@@ -60,6 +80,23 @@ export default function Dashboard() {
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600 mx-auto"></div>
             <p className="mt-4 text-xl font-medium text-gray-700">Ładowanie statystyk...</p>
+          </div>
+        </div>
+    );
+  }
+
+  if (error) {
+    return (
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+          <div className="text-center">
+            <div className="text-red-500 text-6xl mb-4">⚠️</div>
+            <p className="text-xl font-medium text-gray-700 mb-2">{error}</p>
+            <button
+                onClick={loadStats}
+                className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+            >
+              Spróbuj ponownie
+            </button>
           </div>
         </div>
     );
@@ -122,7 +159,7 @@ export default function Dashboard() {
               </div>
           )}
 
-          {/* Szybkie akcje - TUTAJ BYŁY BŁĘDY */}
+          {/* Szybkie akcje */}
           <div className="bg-white rounded-lg shadow p-6 mb-8">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Szybkie akcje 🚀
