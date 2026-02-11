@@ -18,10 +18,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskMapper taskMapper;
 
     @Override
+    @CacheEvict(value = "tasks", allEntries = true)
     public TaskResponseDTO createTask(TaskRequestDTO requestDTO) {
         log.info("Creating new task with title: {}", requestDTO.getTitle());
 
@@ -70,8 +72,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "tasks", key = "#id")
     public TaskResponseDTO getTaskById(Long id) {
-        log.info("Fetching task with id: {}", id);
+        log.info("Fetching task {} FROM DATABASE (not cached)", id);
 
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
@@ -81,8 +84,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "tasks", key = "'all'")
     public List<TaskResponseDTO> getAllTasks() {
-        log.info("Fetching all tasks");
+        log.info("Fetching all tasks FROM DATABASE (not cached)");
 
         return taskRepository.findAll().stream()
                 .map(taskMapper::toDTO)
@@ -91,8 +95,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "tasks", key = "#customerId")
     public List<TaskResponseDTO> getTasksByCustomerId(Long customerId) {
-        log.info("Fetching tasks for customer id: {}", customerId);
+        log.info("Fetching tasks for customer {} FROM DATABASE (not cached)", customerId);
 
         // Validate customer exists
         if (!customerRepository.existsById(customerId)) {
@@ -106,8 +111,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "tasks", key = "#offerId")
     public List<TaskResponseDTO> getTasksByOfferId(Long offerId) {
-        log.info("Fetching tasks for offer id: {}", offerId);
+        log.info("Fetching tasks for offer {} FROM DATABASE (not cached)", offerId);
 
         // Validate offer exists
         if (!offerRepository.existsById(offerId)) {
@@ -121,8 +127,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "tasks", key = "#status")
     public List<TaskResponseDTO> getTasksByStatus(TaskStatus status) {
-        log.info("Fetching tasks with status: {}", status);
+        log.info("Fetching tasks with status {} FROM DATABASE (not cached)", status);
 
         return taskRepository.findByStatus(status).stream()
                 .map(taskMapper::toDTO)
@@ -131,8 +138,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "tasks", key = "'all'")
     public List<TaskResponseDTO> getOverdueTasks() {
-        log.info("Fetching overdue tasks");
+        log.info("Fetching overdue tasks FROM DATABASE (not cached)");
 
         return taskRepository.findOverdueTasks(LocalDateTime.now()).stream()
                 .map(taskMapper::toDTO)
@@ -140,6 +148,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @CacheEvict(value = "tasks", allEntries = true)
     public TaskResponseDTO updateTask(Long id, TaskRequestDTO requestDTO) {
         log.info("Updating task with id: {}", id);
 
@@ -177,6 +186,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @CacheEvict(value = "tasks", allEntries = true)
     public void deleteTask(Long id) {
         log.info("Deleting task with id: {}", id);
 
@@ -201,14 +211,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @CacheEvict(value = "tasks", allEntries = true)
     public TaskResponseDTO updateTaskStatus(Long id, TaskStatus newStatus) {
         log.info("Updating status for task id: {} to {}", id, newStatus);
 
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
-
-        // Тут можна додати логіку: Юзер не може перевести з DONE назад в TODO, якщо це потрібно
-        // if (task.getStatus() == TaskStatus.DONE && newStatus == TaskStatus.TODO) { ... }
 
         task.setStatus(newStatus);
         Task updatedTask = taskRepository.save(task);

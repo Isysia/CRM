@@ -12,9 +12,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerMapper mapper;
 
     @Override
+    @CacheEvict(value = "customers", allEntries = true)
     public CustomerResponseDTO createCustomer(CustomerRequestDTO requestDTO) {
         log.info("Creating new customer with email: {}", requestDTO.getEmail());
 
@@ -47,9 +49,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Cacheable(value = "customers", key = "#id")
     public CustomerResponseDTO getCustomerById(Long id) {
-        log.info("Fetching customer with id: {}", id);
+        log.info("Fetching customer {} FROM DATABASE (not cached)", id);
 
         Customer customer = repository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException(id));
@@ -58,9 +60,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Cacheable(value = "customers", key = "'all'")
     public List<CustomerResponseDTO> getAllCustomers() {
-        log.info("Fetching all customers");
+        log.info("Fetching all customers FROM DATABASE (not cached)");
 
         return repository.findAll().stream()
                 .map(mapper::toResponseDTO)
@@ -68,6 +70,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @CacheEvict(value = "customers", allEntries = true)
     public CustomerResponseDTO updateCustomer(Long id, CustomerRequestDTO requestDTO) {
         log.info("Updating customer with id: {}", id);
 
@@ -98,6 +101,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @CacheEvict(value = "customers", allEntries = true)
     public void deleteCustomer(Long id) {
         log.info("Deleting customer with id: {}", id);
 

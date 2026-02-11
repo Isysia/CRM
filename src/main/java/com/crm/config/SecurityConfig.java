@@ -55,7 +55,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/offers/**").hasRole("ADMIN")
 
                         // Tasks
-                        // ✅ FIX: Дозволяємо USER змінювати тільки статус (PATCH)
                         .requestMatchers(HttpMethod.PATCH, "/api/tasks/*/status").hasAnyRole("USER", "MANAGER", "ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/api/tasks/**").hasAnyRole("USER", "MANAGER", "ADMIN")

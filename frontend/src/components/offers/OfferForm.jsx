@@ -227,6 +227,7 @@ export default function OfferForm() {
                 <option value="SENT">Wysłana</option>
                 <option value="ACCEPTED">Zaakceptowana</option>
                 <option value="REJECTED">Odrzucona</option>
+                <option value="CANCELLED">Anulowana</option>
               </select>
             </div>
 

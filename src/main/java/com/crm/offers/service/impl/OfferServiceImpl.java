@@ -13,11 +13,12 @@ import com.crm.offers.repository.OfferRepository;
 import com.crm.offers.service.OfferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.Cacheable;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class OfferServiceImpl implements OfferService {
     private final OfferMapper offerMapper;
 
     @Override
+    @CacheEvict(value = "offers", allEntries = true)
     public OfferResponseDTO createOffer(OfferRequestDTO requestDTO) {
         log.info("Creating new offer for customer id: {}", requestDTO.getCustomerId());
 
@@ -47,8 +49,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "offers", key = "#id")
     public OfferResponseDTO getOfferById(Long id) {
-        log.info("Fetching offer with id: {}", id);
+        log.info("Fetching offer {} FROM DATABASE (not cached)", id);
 
         Offer offer = offerRepository.findById(id)
                 .orElseThrow(() -> new OfferNotFoundException(id));
@@ -58,8 +61,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "offers", key = "'all'")
     public List<OfferResponseDTO> getAllOffers() {
-        log.info("Fetching all offers");
+        log.info("Fetching all offers FROM DATABASE (not cached)");
 
         return offerRepository.findAll().stream()
                 .map(offerMapper::toResponseDTO)
@@ -68,8 +72,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "offers", key = "#customerId")
     public List<OfferResponseDTO> getOffersByCustomerId(Long customerId) {
-        log.info("Fetching offers for customer id: {}", customerId);
+        log.info("Fetching offers for customer {} FROM DATABASE (not cached)", customerId);
 
         if (!customerRepository.existsById(customerId)) {
             throw new CustomerNotFoundException(customerId);
@@ -81,6 +86,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
+    @CacheEvict(value = "offers", allEntries = true)
     public OfferResponseDTO updateOffer(Long id, OfferRequestDTO requestDTO) {
         log.info("Updating offer with id: {}", id);
 
@@ -105,6 +111,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
+    @CacheEvict(value = "offers", allEntries = true)
     public void deleteOffer(Long id) {
         log.info("Deleting offer with id: {}", id);
 
@@ -116,8 +123,8 @@ public class OfferServiceImpl implements OfferService {
         log.info("Offer deleted successfully with id: {}", id);
     }
 
-    // ✅ НОВИЙ МЕТОД для зміни статусу
     @Override
+    @CacheEvict(value = "offers", allEntries = true)
     public void changeOfferStatus(Long id, String status) {
         log.info("Changing status for offer id: {} to {}", id, status);
 
