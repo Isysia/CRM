@@ -12,7 +12,7 @@ W pełni funkcjonalny system do zarządzania relacjami z klientami (CRM), zaproj
 
 ## Główne funkcjonalności
 * **Klienci (Customers):** Zarządzanie bazą klientów z przypisywaniem statusów (LEAD, ACTIVE, INACTIVE).
-* **Oferty (Offers):** Obsługa lejka sprzedażowego (pipeline) z 6 statusami (m.in. DRAFT, SENT, ACCEPTED).
+* **Oferty (Offers):** Obsługa lejka sprzedażowego (pipeline) z 5 statusami (m.in. DRAFT, SENT, ACCEPTED).
 * **Zadania (Tasks):** Zarządzanie zadaniami z priorytetami i terminami wykonania, automatyczne wykrywanie opóźnień.
 * **Kontrola dostępu (RBAC):** Trzy poziomy uprawnień (USER, MANAGER, ADMIN) z zabezpieczeniem przed eskalacją roli.
 
