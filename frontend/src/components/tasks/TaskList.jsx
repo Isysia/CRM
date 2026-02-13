@@ -9,13 +9,11 @@ export default function TaskList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Фільтри
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [filterPriority, setFilterPriority] = useState('ALL');
   const [filterCustomer, setFilterCustomer] = useState('ALL');
 
-  // ✅ Додаємо isUser
   const { isManager, isAdmin, isUser } = useRole();
 
   useEffect(() => {
@@ -44,10 +42,8 @@ export default function TaskList() {
   const handleToggleStatus = async (task) => {
     try {
       const newStatus = task.status === 'DONE' ? 'TODO' : 'DONE';
-      // Використовуємо PATCH метод
       await taskAPI.updateStatus(task.id, newStatus);
 
-      // Оновлюємо інтерфейс
       setTasks(tasks.map(t => t.id === task.id ? { ...t, status: newStatus } : t));
     } catch (err) {
       alert('Błąd: ' + (err.response?.status === 403 ? 'Brak uprawnień' : err.message));
@@ -64,7 +60,6 @@ export default function TaskList() {
     }
   };
 
-  // ... (допоміжні функції parseDate, getCustomerName залишаються тими ж) ...
   const parseDate = (dateValue) => {
     if (!dateValue) return new Date();
     if (typeof dateValue === 'string') return new Date(dateValue);
@@ -95,7 +90,6 @@ export default function TaskList() {
     return { style: styles[status] || styles.TODO, label: labels[status] || status };
   };
 
-  // Фільтрація
   const filteredTasks = tasks.filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'ALL' || task.status === filterStatus;
@@ -107,14 +101,12 @@ export default function TaskList() {
   const canEdit = isManager(); // Для редагування/видалення
   const canDelete = isAdmin();
 
-  // ✅ FIX: Права на виконання задачі є у всіх авторизованих (User, Manager, Admin)
   const canComplete = isUser() || isManager() || isAdmin();
 
   if (loading) return <div className="p-8 text-center">Ładowanie...</div>;
 
   return (
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header & Filters (залишаємо як було, скорочено для економії місця) */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Zadania</h1>
           {canEdit && (
@@ -124,7 +116,6 @@ export default function TaskList() {
           )}
         </div>
 
-        {/* Фільтри UI тут... (той самий код, що був) */}
         <div className="bg-white rounded-lg shadow p-4 mb-6 grid grid-cols-4 gap-4">
           <input placeholder="Szukaj..." className="border p-2 rounded" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
           <select className="border p-2 rounded" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
@@ -132,7 +123,6 @@ export default function TaskList() {
             <option value="TODO">Do zrobienia</option>
             <option value="DONE">Zrobione</option>
           </select>
-          {/* Інші фільтри... */}
         </div>
 
         <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -152,7 +142,6 @@ export default function TaskList() {
             {filteredTasks.map((task) => (
                 <tr key={task.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
-                    {/* ✅ FIX: Відображаємо чекбокс, якщо є права canComplete */}
                     {canComplete && (
                         <input
                             type="checkbox"
@@ -163,7 +152,6 @@ export default function TaskList() {
                     )}
                   </td>
                   <td className="px-6 py-4 font-medium">{task.title}</td>
-                  {/* ... решта колонок ... */}
                   <td className="px-6 py-4">{task.customerName || '-'}</td>
                   <td className="px-6 py-4">{formatDate(task.dueDate)}</td>
                   <td className="px-6 py-4">

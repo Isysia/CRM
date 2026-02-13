@@ -25,14 +25,12 @@ export default function Dashboard() {
       setLoading(true);
       setError(null);
 
-      // ✅ Виконуємо всі запити паралельно
       const [customersRes, offersRes, tasksRes] = await Promise.all([
         customerAPI.getAll(),
         offerAPI.getAll(),
         taskAPI.getAll()
       ]);
 
-      // ✅ Обробляємо отримані дані
       processStats(
           customersRes.data || [],
           offersRes.data || [],

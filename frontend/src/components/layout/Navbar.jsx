@@ -4,7 +4,7 @@ import { useRole } from '../../hooks/useRole';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const { isAdmin } = useRole(); // Використовуємо хук для перевірки ролі
+  const { isAdmin } = useRole();
   const navigate = useNavigate();
 
   const handleLogout = () => {

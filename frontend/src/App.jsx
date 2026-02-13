@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './hooks/useAuth';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LoginPage from './components/auth/LoginPage';
-import RegisterPage from './components/auth/RegisterPage'; // Новий імпорт
+import RegisterPage from './components/auth/RegisterPage';
 import Navbar from './components/layout/Navbar';
 import Dashboard from './components/layout/Dashboard';
 import CustomerList from './components/customers/CustomerList';
@@ -14,18 +14,16 @@ import OfferDetails from './components/offers/OfferDetails';
 import TaskList from './components/tasks/TaskList';
 import TaskForm from './components/tasks/TaskForm';
 import TaskDetails from './components/tasks/TaskDetails';
-import UsersList from './components/admin/UsersList'; // Новий імпорт
+import UsersList from './components/admin/UsersList';
 
 function App() {
   return (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            {/* Публічні роути */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
-            {/* Захищені роути */}
             <Route
                 path="/*"
                 element={

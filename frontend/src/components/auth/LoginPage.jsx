@@ -18,7 +18,7 @@ export default function LoginPage() {
       await login(username, password);
       navigate('/');
     } catch (err) {
-      setError('Nieprawidłowa nazwa użytkownika lub hasło'); // Повідомлення польською
+      setError('Nieprawidłowa nazwa użytkownika lub hasło');
     } finally {
       setLoading(false);
     }
@@ -73,7 +73,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* --- НОВА ЧАСТИНА: Посилання на реєстрацію --- */}
           <div className="mt-4 text-center border-t pt-4">
             <p className="text-sm text-gray-600">
               Nie masz konta?{' '}

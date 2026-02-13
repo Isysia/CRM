@@ -6,7 +6,6 @@ export const useRole = () => {
     const getUserRole = () => {
         if (!user) return null;
 
-        // Якщо є roles array (старий код)
         if (user.roles && Array.isArray(user.roles)) {
             if (user.roles.includes('ROLE_ADMIN') || user.roles.includes('ADMIN')) {
                 return 'ROLE_ADMIN';
@@ -19,7 +18,6 @@ export const useRole = () => {
             }
         }
 
-        // Якщо немає roles, визначаємо по username (для Kubernetes)
         const username = user.username?.toLowerCase();
         if (username === 'admin') return 'ROLE_ADMIN';
         if (username === 'manager') return 'ROLE_MANAGER';

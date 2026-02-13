@@ -23,19 +23,16 @@ export default function TaskDetails() {
       setLoading(true);
       setError(null);
 
-      // 1. Завантажуємо головне завдання
       const response = await taskAPI.getById(id);
       const taskData = response.data;
       setTask(taskData);
 
-      // 2. Завантажуємо клієнта (незалежно)
       if (taskData.customerId) {
         customerAPI.getById(taskData.customerId)
             .then(res => setCustomer(res.data))
             .catch(err => console.warn('Warning: Could not fetch customer', err));
       }
 
-      // 3. Завантажуємо оферту (незалежно)
       if (taskData.offerId) {
         offerAPI.getById(taskData.offerId)
             .then(res => setOffer(res.data))
@@ -43,7 +40,6 @@ export default function TaskDetails() {
       }
 
     } catch (err) {
-      // Критична помилка тільки якщо саме завдання не завантажилось
       setError('Nie udało się załadować zadania');
       console.error('Error fetching task:', err);
     } finally {
@@ -69,11 +65,8 @@ export default function TaskDetails() {
     try {
       const newStatus = task.status === 'DONE' ? 'TODO' : 'DONE';
 
-      // ВИКОРИСТОВУЄМО СПЕЦІАЛЬНИЙ МЕТОД З API.JS
-      // Він відправляє PATCH запит тільки зі статусом, не чіпаючи інші поля
       await taskAPI.updateStatus(id, newStatus);
 
-      // Оновлюємо інтерфейс
       setTask(prev => ({ ...prev, status: newStatus }));
     } catch (err) {
       alert('Nie udało się zaktualizować statusu');

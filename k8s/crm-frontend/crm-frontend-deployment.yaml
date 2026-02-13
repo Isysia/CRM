@@ -19,9 +19,7 @@ spec:
     spec:
       containers:
         - name: crm-frontend
-          # 👇 ВАЖЛИВО: Назва має збігатися з тією, що у rebuild.ps1
           image: crm-frontend-dev:latest
-          # 👇 ВАЖЛИВО: Never змушує використовувати локально зібраний образ
           imagePullPolicy: Never
           ports:
             - containerPort: 80
@@ -33,7 +31,6 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "500m"
-          # Nginx відповідає на кореневий запиt, тому міняємо /health на /
           livenessProbe:
             httpGet:
               path: /

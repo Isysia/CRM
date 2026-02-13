@@ -27,8 +27,20 @@ export default function RegisterPage() {
         e.preventDefault();
         setError('');
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(formData.email)) {
+            setError('Podaj poprawny adres email (np. nazwa@domena.pl)');
+            return;
+        }
+
         if (formData.password !== formData.confirmPassword) {
-            setError('Hasła nie są identyczne'); // Паролі не збігаються
+            setError('Hasła nie są identyczne');
+            return;
+        }
+
+        if (formData.password.length < 6) {
+            setError('Hasło musi mieć co najmniej 6 znaków');
             return;
         }
 

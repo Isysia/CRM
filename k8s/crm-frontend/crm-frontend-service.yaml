@@ -7,7 +7,6 @@ metadata:
     app: crm-frontend
     tier: frontend
 spec:
-  # Використовуємо ClusterIP, бо у нас є Ingress
   type: ClusterIP
   selector:
     app: crm-frontend

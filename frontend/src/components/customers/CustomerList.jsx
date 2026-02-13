@@ -12,7 +12,6 @@ export default function CustomerList() {
   const { isManager, isAdmin } = useRole();
   const navigate = useNavigate();
 
-  // Використовуємо наш новий хук
   const { loading, error, execute: fetchCustomersExec } = useApi(customerAPI.getAll);
 
   useEffect(() => {

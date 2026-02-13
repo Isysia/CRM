@@ -31,7 +31,6 @@ public class DataInitializer {
 
             log.info("Initializing default users...");
 
-            // ✅ ADMIN - з префіксом ROLE_
             User admin = new User();
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("password"));
@@ -42,7 +41,6 @@ public class DataInitializer {
             userRepository.save(admin);
             log.info("Created ADMIN user: username=admin, password=password");
 
-            // ✅ MANAGER - з префіксом ROLE_
             User manager = new User();
             manager.setUsername("manager");
             manager.setPassword(passwordEncoder.encode("password"));
@@ -53,7 +51,6 @@ public class DataInitializer {
             userRepository.save(manager);
             log.info("Created MANAGER user: username=manager, password=password");
 
-            // ✅ USER - з префіксом ROLE_
             User user = new User();
             user.setUsername("user");
             user.setPassword(passwordEncoder.encode("password"));

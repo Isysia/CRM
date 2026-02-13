@@ -11,7 +11,6 @@ export const useApi = (apiFunc) => {
             const response = await apiFunc(...args);
             return response.data;
         } catch (err) {
-            // Беремо повідомлення з вашого GlobalExceptionHandler
             const message = err.response?.data?.message || 'Wystąpił nieoczekiwany błąd';
             setError(message);
             throw err;

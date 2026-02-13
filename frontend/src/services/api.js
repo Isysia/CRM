@@ -53,7 +53,6 @@ export const offerAPI = {
     create: (data) => api.post('/offers', data),
     update: (id, data) => api.put(`/offers/${id}`, data),
     delete: (id) => api.delete(`/offers/${id}`),
-    // ✅ ДОДАНО: Метод для зміни статусу
     updateStatus: (id, status) => api.patch(`/offers/${id}/status`, { status }),
 };
 

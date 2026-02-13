@@ -35,7 +35,7 @@ export default function OfferList() {
     }
   };
 
-  // ✅ NOWA FUNKCJA: Zmiany statusu
+  // NOWA FUNKCJA: Zmiany statusu
   const handleStatusChange = async (offerId, newStatus) => {
     try {
       await offerAPI.updateStatus(offerId, newStatus);
@@ -93,7 +93,7 @@ export default function OfferList() {
     return styles[status] || 'bg-gray-100 text-gray-800';
   };
 
-  // ✅ Helper: Tłumaczenie statusów
+  // Helper: Tłumaczenie statusów
   const getStatusLabel = (status) => {
     const labels = {
       DRAFT: 'Szkic',

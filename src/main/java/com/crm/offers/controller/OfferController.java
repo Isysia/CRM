@@ -54,7 +54,6 @@ public class OfferController {
         return ResponseEntity.ok(service.updateOffer(id, requestDTO));
     }
 
-    // ✅ НОВИЙ ENDPOINT: Зміна статусу (без окремого DTO класу)
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public ResponseEntity<Void> changeOfferStatus(

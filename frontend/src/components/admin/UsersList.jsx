@@ -44,14 +44,12 @@ export default function UsersList() {
         }
     };
 
-    // ✅ Допоміжна функція для очищення ролі від "ROLE_"
     const getRoleValue = (roles) => {
         if (!roles || roles.length === 0) return 'USER';
         const role = roles[0];
         return role.replace('ROLE_', '');
     };
 
-    // ✅ Перевірка, чи користувач має роль ADMIN
     const isAdmin = (roles) => {
         if (!roles) return false;
         return roles.some(role => role === 'ROLE_ADMIN' || role === 'ADMIN');

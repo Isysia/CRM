@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    // --- Новий метод для реєстрації ---
     @Override
     public void registerNewUser(RegisterRequest request) {
         log.info("Registering new user: {}", request.getUsername());
@@ -49,7 +48,6 @@ public class UserServiceImpl implements UserService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        // Встановлюємо роль за замовчуванням
         Set<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
         user.setRoles(roles);
@@ -61,7 +59,6 @@ public class UserServiceImpl implements UserService {
         log.info("User registered successfully: {}", user.getUsername());
     }
 
-    // --- ✅ ВИПРАВЛЕНО: Метод для зміни ролі ---
     @Override
     public void changeUserRole(Long id, ChangeRoleRequest request) {
         log.info("Changing role for user id: {} to {}", id, request.getRole());
@@ -69,17 +66,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
-        // Валідація ролі
         try {
             Role newRole = Role.valueOf(request.getRole());
 
-            // ✅ ЗАХИСТ: Заборона зміни ролі на ADMIN
             if (newRole == Role.ADMIN) {
                 log.warn("Attempt to change role to ADMIN for user {} - blocked", id);
                 throw new IllegalArgumentException("Nie można zmienić roli na ADMIN przez interfejs");
             }
 
-            // ✅ ВИПРАВЛЕНО: Використовуємо змінний HashSet замість Set.of()
             Set<String> roles = new HashSet<>();
             roles.add(newRole.name());
             user.setRoles(roles);
@@ -94,7 +88,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO createUser(UserRequestDTO requestDTO) {
-        // Старий метод для створення адміном (залишаємо без змін)
         log.info("Creating new user with username: {}", requestDTO.getUsername());
         if (userRepository.existsByUsername(requestDTO.getUsername())) {
             throw new DuplicateUserException("Username already exists: " + requestDTO.getUsername());

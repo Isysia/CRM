@@ -20,7 +20,6 @@ public class UserMapper {
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
-        // ✅ Передаємо ролі на фронтенд
         dto.setRoles(user.getRoles() != null ? new HashSet<>(user.getRoles()) : new HashSet<>());
         dto.setEnabled(user.getEnabled());
         dto.setAccountNonLocked(user.getAccountNonLocked());

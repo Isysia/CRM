@@ -54,7 +54,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // --- Новий ендпоінт для зміни ролі ---
     @PatchMapping("/{id}/role")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> changeUserRole(@PathVariable Long id, @RequestBody ChangeRoleRequest request) {
