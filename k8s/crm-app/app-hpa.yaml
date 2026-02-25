@@ -16,4 +16,4 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 70  # Якщо процесор завантажений на 70%, додаємо поди
+          averageUtilization: 70

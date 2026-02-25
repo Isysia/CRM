@@ -58,7 +58,7 @@ export default function CustomerForm() {
       return `+48 ${part1}`.trim();
     }
 
-    return value.startsWith('+') ? '+' : ''; // Дозволяємо почати з +
+    return value.startsWith('+') ? '+' : '';
   };
 
   const handleChange = (e) => {

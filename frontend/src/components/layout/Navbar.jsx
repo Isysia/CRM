@@ -30,7 +30,6 @@ export default function Navbar() {
                 <Link to="/tasks" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md hover:bg-blue-50 transition-colors">
                   Zadania
                 </Link>
-                {/* Тільки для Адміна */}
                 {isAdmin() && (
                     <Link to="/users" className="text-purple-700 hover:text-purple-600 px-3 py-2 rounded-md hover:bg-purple-50 transition-colors font-medium">
                       👥 Użytkownicy

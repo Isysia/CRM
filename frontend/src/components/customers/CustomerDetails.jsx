@@ -20,10 +20,10 @@ export default function CustomerDetails() {
     try {
       setLoading(true);
       const response = await customerAPI.getById(id);
-      console.log('RAW Response:', response.data);  // ← ДОДАЙ
-      console.log('createdAt type:', typeof response.data.createdAt);  // ← ДОДАЙ
-      console.log('createdAt value:', response.data.createdAt);  // ← ДОДАЙ
-      console.log('Parsed date:', new Date(response.data.createdAt));  // ← ДОДАЙ
+      console.log('RAW Response:', response.data);
+      console.log('createdAt type:', typeof response.data.createdAt);
+      console.log('createdAt value:', response.data.createdAt);
+      console.log('Parsed date:', new Date(response.data.createdAt));
       setCustomer(response.data);
     } catch (err) {
       console.error('Error fetching customer:', err); // DEBUG
@@ -50,7 +50,7 @@ export default function CustomerDetails() {
     if (!dateString) return '-';
     try {
       const dateWithTimezone = dateString.includes('Z') ? dateString : `${dateString}Z`;
-      const date = new Date(dateString);
+      const date = new Date(dateString);  // "2026-01-02T03:37:24+01:00"
       return date.toLocaleString('pl-PL', {
         year: 'numeric',
         month: '2-digit',
